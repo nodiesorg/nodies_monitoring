@@ -1,3 +1,4 @@
+### [README still WIP, not contribution friendly yet]
 
 ### Monitoring Server Configuration
 In `prometheus/prometheus.yml`, add hosts emitting metrics to the targets under scrape config's node job.
