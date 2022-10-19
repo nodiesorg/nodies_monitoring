@@ -12,6 +12,6 @@ chains.json
 /loki/loki-config.yml
 /grafana_provisioning/datasources/*.yaml
 /grafana_provisioning/alerting/contactpoint.yaml
-/clients/promtail1/promtail-config.yml
+/clients/promtail/promtail-config.yml
 /clients/bcexporter/config/config.yml
 docker-compose.yml
