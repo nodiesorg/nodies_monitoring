@@ -21,8 +21,8 @@ output_datasource = './grafana_provisioning/datasources'
 template_contactpoint = './alerting/contactpoint.yaml'
 output_contactpoint = './grafana_provisioning/alerting/contactpoint.yaml'
 
-template_client_promtail = './temlpates/clients/promtail-config.yml'
-output_client_promtail = './clients/promtail/promtail-config.yml'
+template_client_promtail = './temlpates/clients/promtail1-config.yml'
+output_client_promtail = './clients/promtail1/promtail1-config.yml'
 
 template_client_bcexporter = './templates/clients/config.yml'
 output_client_bcexporter = './clients/bcexporter/config/config.yml'
@@ -91,7 +91,7 @@ if run_docker_compose:
         newdict = yaml.safe_load(f)
     list_services = newdict["services"]
     for (k, v) in list_services.items():
-        if k not in ('loki', 'grafana', 'minio', 'prometheus', 'alertmanager', 'blockchain_exporter', 'promtail', 'node_exporter', 'cadvisor'):
+        if k not in ('loki', 'grafana', 'minio', 'prometheus', 'alertmanager', 'blockchain_exporter', 'promtail1', 'node_exporter', 'cadvisor'):
             print(f'Unknown service {k} in docker-compose')
             continue
         list_services[f'{k}']['ports'] = [os.getenv(f'{k.upper()}_PORT') + ':' + os.getenv(f'{k.upper()}_PORT')]
