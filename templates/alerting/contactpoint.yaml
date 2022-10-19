@@ -1,0 +1,26 @@
+# config file version
+apiVersion: 1
+
+# List of receivers that should be deleted
+deleteContactPoints:
+  # <int> organization ID, default = 1
+  - orgId: 1
+    # <string, required> unique identifier for the receiver
+    uid: grafana-default-slack-Test
+
+# List of contact points to import or update
+contactPoints:
+  # <int> organization ID, default = 1
+  - orgId: 1
+    # <string, required> name of the contact point
+    name: grafana-default-slack
+    receivers:
+      # <string, required> unique identifier for the receiver
+      - uid: grafana-default-slack
+        # <string, required> type of the receiver
+        type: slack
+        # <object, required> settings for the specific receiver type
+        settings:
+          url: http://test:9000
+          text: "{{ template \"slack\" . }}"
+          title: "{{ if eq .Status \"firing\" }}:fire:{{ else }}:white_check_mark:{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}"

@@ -1,0 +1,125 @@
+# config file version
+apiVersion: 1
+
+# List of alert rule UIDs that should be deleted
+deleteRules:
+  # <int> organization ID, default = 1
+  - orgId: 1
+    # <string, required> unique identifier for the rule
+    uid: stale_chain-Test
+
+# List of rule groups to import or update
+groups:
+  # <int> organization ID, default = 1
+  - orgId: 1
+    # <string, required> name of the rule group
+    name: chain
+    # <string, required> name of the folder the rule group will be stored in
+    folder: chain
+    # <duration, required> interval that the rule group should evaluated at
+    interval: 60s
+    # <list, required> list of rules that are part of the rule group
+    rules:
+      # <string, required> unique identifier for the rule
+      - uid: stale_chain
+        # <string, required> title of the rule that will be displayed in the UI
+        title: stale_chain
+        # <string, required> which query should be used for the condition
+        condition: C
+        # <list, required> list of query objects that should be executed on each
+        #                  evaluation - should be obtained trough the API
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: 'my_prometheus_uid'
+            model:
+              editorMode: code
+              expr: "max by(endpoint) (max_over_time(current_height{job=\"node\"}[5m])) - min by(endpoint) (min_over_time(current_height{job=\"node\"}[5m]))"
+              legendFormat: "{{endpoint}}"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+              range: true
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: -100
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    type: avg
+                  type: query
+              dataSource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: -100
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    type: avg
+                  type: query
+              dataSource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: "$B == 0 || is_number($B) == 0"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: math
+
+        # <string> UID of a dashboard that the alert rule should be linked to
+#        dashboardUid: my_dashboard
+        # <int> ID of the panel that the alert rule should be linked to
+#        panelId: 123
+        # <string> the state the alert rule will have when no data is returned
+        #          possible values: "NoData", "Alerting", "OK", default = NoData
+        noDataState: Alerting
+        execErrorState: Error
+        # <string> the state the alert rule will have when the query execution
+        #          failed - possible values: "Error", "Alerting", "OK"
+        #          default = Alerting
+        # <duration, required> for how long should the alert fire before alerting
+        for: 60s
+        # <map<string, string>> a map of strings to pass around any data
+        annotations:
+          description: "Current Height has not moved for 5 minutes!"
+          summary: "Stale Chain!"
+        # <map<string, string> a map of strings that can be used to filter and
+        #                      route alerts
+        labels:
+          severity: page

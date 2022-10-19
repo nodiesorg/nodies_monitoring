@@ -1,0 +1,44 @@
+groups:
+  - name: error-alerting
+    rules:
+      - alert: HighFailureRateMicro
+        expr: |
+          sum by (node)
+            (rate({job="varjobs"}[60m]))
+            > 10
+        for: 60m
+        labels:
+            severity: sev2.5
+        annotations:
+            title: "High Error Code Alert (Single Node)"
+            description: "high rate of 400 and 500 status codes for {{ $labels.node }}"
+            dashboard: "https://grafana.com/service-dashboard"
+            logurl: "https://grafana.com/log-explorer"
+
+      - alert: HighFailureRateRegion
+        expr: |
+          sum by (region)
+            (rate({job="varjobs"}[30m]))
+            > 50
+        for: 30m
+        labels:
+            severity: sev2
+        annotations:
+            title: "High Error Code Alert (Region)"
+            description: "high rate of 400 and 500 status codes for {{ $labels.region }}"
+            dashboard: "https://grafana.com/service-dashboard"
+            logurl: "https://grafana.com/log-explorer"
+
+      - alert: HighFailureRateBlockchain
+        expr: |
+          sum by (blockchain)
+            (rate({job="varjobs"}[30m]))
+            > 50
+        for: 30m
+        labels:
+            severity: sev2
+        annotations:
+            title: "High Error Code Alert (Region)"
+            description: "high rate of 400 and 500 status codes for blockchain {{ $labels.blockchain }}"
+            dashboard: "https://grafana.com/service-dashboard"
+            logurl: "https://grafana.com/log-explorer"

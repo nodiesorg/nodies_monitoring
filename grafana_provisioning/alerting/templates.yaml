@@ -1,0 +1,30 @@
+# config file version
+apiVersion: 1
+
+# List of alert rule UIDs that should be deleted
+deleteTemplates:
+  # <int> organization ID, default = 1
+  - orgId: 1
+    # <string, required> name of the template, must be unique
+    name: slack-Test
+
+# List of templates to import or update
+templates:
+  # <int> organization ID, default = 1
+  - orgID: 1
+    # <string, required> name of the template, must be unique
+    name: slack
+    # <string, required> content of the the template
+    template: |
+      {{ define "slack" }}
+        {{ range .Alerts }}
+                  *Summary:* {{ .Annotations.summary }}
+                  *Description:* {{ .Annotations.description }}
+                  *Severity:* `{{ .Labels.severity }}`
+                  *Details:*
+                  {{ range .Labels.SortedPairs }} - *{{ .Name }}:* `{{ .Value }}`
+                  {{ end }}
+                   - *Impact*: {{ .Annotations.impact }}
+                   - *Receiver*: warning-{{ .Labels.team }}-slack
+        {{ end }}
+      {{ end }}
