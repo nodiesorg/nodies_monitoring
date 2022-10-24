@@ -1,0 +1,62 @@
+version: "3"
+
+networks:
+  clients:
+
+services:
+
+  blockchain_exporter:
+    container_name: blockchain_exporter
+    image: nodies/blockchain_exporter
+    build: ./bcexporter/
+    ports:
+      - "9877:9877"
+    networks:
+      clients:
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:2.6.1
+    volumes:
+      - ./log:/var/log
+      - ./promtail:/etc/promtail
+    # ports:
+    #   - "1514:1514" # this is only needed if you are going to send syslogs
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/promtail-config.yml
+    networks:
+      clients:
+
+
+  node_exporter:
+    container_name: node_exporter
+    image: prom/node-exporter:v1.4.0
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - "9100:9100"
+    restart: always
+    networks:
+      clients:
+    deploy:
+      mode: global
+
+#  cadvisor:
+#    container_name: cadvisor
+#    image: gcr.io/cadvisor/cadvisor:latest
+#    ports:
+#    - "8080:8080"
+#    volumes:
+#    - /:/rootfs:ro
+#    - /var/run:/var/run:rw
+#    - /sys:/sys:ro
+#    - /var/lib/docker/:/var/lib/docker:ro
+#    networks:
+#      clients:
