@@ -1,5 +1,4 @@
 import json
-
 import yaml
 
 
@@ -15,5 +14,5 @@ class Config:
             return yaml.safe_load(stream)
 
     def _get_chains(self):
-        with open('./config/chains.json', "r") as stream:
+        with open("./config/chains.json", "r") as stream:
             return json.load(stream)

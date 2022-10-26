@@ -8,6 +8,7 @@ services:
   loki:
     container_name: loki
     image: grafana/loki:2.6.1
+    user: "0:0"
     volumes:
       - ./loki:/etc/loki
     ports:
@@ -20,7 +21,7 @@ services:
   grafana:
     container_name: grafana
     image: grafana/grafana:9.1.6-ubuntu
-    user: "1000"
+    user: "0:0"
     volumes:
       - ./grafana:/var/lib/grafana
       - ./grafana_provisioning:/etc/grafana/provisioning
@@ -33,6 +34,7 @@ services:
   minio:
     container_name: minio
     image: minio/minio
+    user: "0:0"
     entrypoint:
       - sh
       - -euc
@@ -55,6 +57,7 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:v2.37.1
+    user: "0:0"
     ports:
       - "9090:9090"
     volumes:
@@ -67,6 +70,7 @@ services:
   alertmanager:
     container_name: alertmanager
     image: prom/alertmanager:v0.24.0
+    user: "0:0"
     ports:
       - "9093:9093"
     volumes:
