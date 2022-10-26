@@ -67,7 +67,7 @@ if run_provisoning_datasources:
     for source in ['loki', 'prometheus']:
         with open(f'{template_datasource}/{source}.yaml', "r") as f:
             newdict = yaml.safe_load(f)
-        newdict["datasources"][0]["url"] = 'https://' + os.getenv("MONITORING_ENDPOINT") + ':' + os.getenv(f'{source.upper()}_PORT')
+        newdict["datasources"][0]["url"] = 'http://' + os.getenv("MONITORING_ENDPOINT") + ':' + os.getenv(f'{source.upper()}_PORT')
         with open(f'{output_datasource}/{source}.yaml', "w") as f:
             yaml.dump(newdict, f)
 
@@ -81,7 +81,7 @@ if run_contactpoint:
 if run_client_promtail:
     with open(template_client_promtail, "r") as f:
         newdict = yaml.safe_load(f)
-    newdict["clients"][0]["url"] = 'https://' + os.getenv('MONITORING_ENDPOINT') + ':' + os.getenv('LOKI_PORT') + '/loki/api/v1/push'
+    newdict["clients"][0]["url"] = 'http://' + os.getenv('MONITORING_ENDPOINT') + ':' + os.getenv('LOKI_PORT') + '/loki/api/v1/push'
     newdict["server"]["http_listen_port"] = int(os.getenv('PROMTAIL_PORT'))
     with open(output_client_promtail, "w") as f:
         yaml.dump(newdict, f)
