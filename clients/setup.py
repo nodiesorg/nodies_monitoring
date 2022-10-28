@@ -11,7 +11,7 @@ This method parses several environment variables and returns the values in a dic
 def _get_env_vars():
     env_vars = [
         "BLOCKCHAIN_EXPORTER_ENDPOINT",
-        "BLOCKCHAIN_EXPORTER_PORT", "PROMTAIL_PORT", "LOKI_ENDPOINT", "LOKI_PORT"
+        "BLOCKCHAIN_EXPORTER_PORT", "PROMTAIL_PORT", "MONITORING_ENDPOINT", "LOKI_PORT"
     ]
     env_var_dict = {}
     for env_var in env_vars:
@@ -36,7 +36,7 @@ def generate_config(completed_template, output_path):
 def update_promtail():
     template_dict = get_template(
         Path("../templates/clients/promtail-config.yml"))
-    template_dict["clients"][0]["url"] = f"http://{env_vars['LOKI_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
+    template_dict["clients"][0]["url"] = f"http://{env_vars['MONITORING_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
     template_dict["server"]["http_listen_port"] = env_vars["PROMTAIL_PORT"]
     generate_config(template_dict, Path('./promtail/promtail-config.yml'))
 

@@ -11,10 +11,10 @@ This method parses several environment variables and returns the values in a dic
 
 def _get_env_vars():
     env_vars = [
-        "NODE_EXPORTER_ENDPOINT", "NODE_EXPORTER_PORT", "BLOCKCHAIN_EXPORTER_ENDPOINT",
-        "BLOCKCHAIN_EXPORTER_PORT", "CADVISOR_EXPORTER_ENDPOINT", "CADVISOR_EXPORTER_PORT",
-        "LOKI_PORT", "LOKI_ENDPOINT", "PROMETHEUS_ENDPOINT", "PROMETHEUS_PORT", "GRAFANA_PORT",
-        "MINIO_PORT", "ALERTMANAGER_PORT", "PROMTAIL_PORT", "SLACK_WEBHOOK", "MONITORING_ENDPOINT"
+        "NODE_EXPORTER_PORT",
+        "BLOCKCHAIN_EXPORTER_PORT", "CADVISOR_EXPORTER_PORT",
+        "LOKI_PORT", "PROMETHEUS_PORT", "GRAFANA_PORT", "MINIO_PORT",
+        "PROMTAIL_PORT", "SLACK_WEBHOOK", "MONITORING_ENDPOINT", "LOGGING_ENDPOINT"
     ]
     env_var_dict = {}
     for env_var in env_vars:
@@ -41,13 +41,13 @@ def update_prometheus_config():
     for job_dict in template_dict["scrape_configs"]:
         targets_dict_path = ("static_configs", 0, "targets")
         if job_dict["job_name"] == "node":
-            target = f"{env_vars['NODE_EXPORTER_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
+            target = f"{env_vars['LOGGING_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
             job_dict[targets_dict_path] = target
         elif job_dict["job_name"] == "blockchain":
-            target = f"{env_vars['BLOCKCHAIN_EXPORTER_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
+            target = f"{env_vars['LOGGING_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
             job_dict[targets_dict_path] = target
         elif job_dict["job_name"] == "cadvisor":
-            target = f"{env_vars['CADVISOR_EXPORTER_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
+            target = f"{env_vars['LOGGING_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
             job_dict[targets_dict_path] = target
         else:
             print(f"Unexpected prometheus job found in config: {job_name}")
@@ -79,7 +79,6 @@ def update_alerting_contactpoint():
     template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = env_vars["SLACK_WEBHOOK"]
     generate_config(template_dict, Path(
         './grafana_provisioning/alerting/contactpoint.yaml'))
-
 
 
 def update_root_docker_compose():
