@@ -14,7 +14,7 @@ def _get_env_vars():
         "NODE_EXPORTER_ENDPOINT", "NODE_EXPORTER_PORT", "BLOCKCHAIN_EXPORTER_ENDPOINT",
         "BLOCKCHAIN_EXPORTER_PORT", "CADVISOR_EXPORTER_ENDPOINT", "CADVISOR_EXPORTER_PORT",
         "LOKI_PORT", "LOKI_ENDPOINT", "PROMETHEUS_ENDPOINT", "PROMETHEUS_PORT", "GRAFANA_PORT",
-        "MINIO_PORT", "ALERTMANAGER_PORT", "PROMTAIL_PORT", "SLACK_WEBHOOK"
+        "MINIO_PORT", "ALERTMANAGER_PORT", "PROMTAIL_PORT", "SLACK_WEBHOOK", "MONITORING_ENDPOINT"
     ]
     env_var_dict = {}
     for env_var in env_vars:
@@ -66,7 +66,7 @@ def update_datasource(datasource):
     else:
         template_dict = get_template(
             Path(f'./templates/datasources/{datasource}.yaml'))
-        endpoint = env_vars[f"{datasource.upper()}_ENDPOINT"]
+        endpoint = env_vars["MONITORING_ENDPOINT"]
         port = env_vars[f"{datasource.upper()}_PORT"]
         template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
         generate_config(template_dict, Path(
