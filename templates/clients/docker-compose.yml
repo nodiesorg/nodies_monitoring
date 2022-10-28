@@ -8,7 +8,6 @@ services:
   blockchain_exporter:
     container_name: blockchain_exporter
     image: nodies/blockchain_exporter
-    user: "0:0"
     volumes:
       - ./bcexporter:/usr/app/bc_node_exporter
     build: ./bcexporter/
@@ -20,7 +19,6 @@ services:
   promtail:
     container_name: promtail
     image: grafana/promtail:2.6.1
-    user: "0:0"
     volumes:
       - ./log:/var/log
       - ./promtail:/etc/promtail
@@ -35,7 +33,6 @@ services:
   node_exporter:
     container_name: node_exporter
     image: prom/node-exporter:v1.4.0
-    user: "0:0"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -53,16 +50,15 @@ services:
     deploy:
       mode: global
 
-#  cadvisor:
-#    container_name: cadvisor
-#    image: gcr.io/cadvisor/cadvisor:latest
-#    user: "0:0"
-#    ports:
-#    - "8080:8080"
-#    volumes:
-#    - /:/rootfs:ro
-#    - /var/run:/var/run:rw
-#    - /sys:/sys:ro
-#    - /var/lib/docker/:/var/lib/docker:ro
-#    networks:
-#      clients:
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+    - "8080:8080"
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      clients:
