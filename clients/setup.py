@@ -2,6 +2,7 @@ import argparse
 import yaml
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 '''
 This method parses several environment variables and returns the values in a dictionary.
@@ -18,7 +19,7 @@ def _get_env_vars():
         env_var_dict[env_var] = os.getenv(env_var)
     return env_var_dict
 
-
+load_dotenv()
 env_vars = _get_env_vars()
 
 
@@ -37,20 +38,20 @@ def update_promtail():
     template_dict = get_template(
         Path("../templates/clients/promtail-config.yml"))
     template_dict["clients"][0]["url"] = f"http://{env_vars['MONITORING_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
-    template_dict["server"]["http_listen_port"] = env_vars["PROMTAIL_PORT"]
+    template_dict["server"]["http_listen_port"] = int(env_vars["PROMTAIL_PORT"])
     generate_config(template_dict, Path('./promtail/promtail-config.yml'))
 
 
 def update_bcexporter():
     template_dict = get_template(Path('../templates/clients/config.yml'))
-    template_dict["exporter_port"] = env_vars['BLOCKCHAIN_EXPORTER_PORT']
+    template_dict["exporter_port"] = int(env_vars['BLOCKCHAIN_EXPORTER_PORT'])
     generate_config(template_dict, Path('./bcexporter/config/config.yml'))
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--clients', nargs='+',
-                        help='possible clients to run are bcexporter, promtail, cadvisor,  and nodeexporter')
+    parser.add_argument('-c', '--clients', nargs='+', default=['blockchain_exporter', 'promtail', 'cadvisor', 'node_exporter']
+                        , help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
 
     args = parser.parse_args()
     clients = args.clients

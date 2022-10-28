@@ -2,6 +2,8 @@ from pathlib import Path
 import yaml
 import os
 import argparse
+from dotenv import load_dotenv
+from pprint import pprint
 
 
 '''
@@ -14,7 +16,7 @@ def _get_env_vars():
         "NODE_EXPORTER_PORT",
         "BLOCKCHAIN_EXPORTER_PORT", "CADVISOR_EXPORTER_PORT",
         "LOKI_PORT", "PROMETHEUS_PORT", "GRAFANA_PORT", "MINIO_PORT",
-        "PROMTAIL_PORT", "SLACK_WEBHOOK", "MONITORING_ENDPOINT", "LOGGING_ENDPOINT"
+        "PROMTAIL_PORT", "SLACK_WEBHOOK", "MONITORING_ENDPOINT", "EXPORTER_ENDPOINT"
     ]
     env_var_dict = {}
     for env_var in env_vars:
@@ -22,6 +24,7 @@ def _get_env_vars():
     return env_var_dict
 
 
+load_dotenv()
 env_vars = _get_env_vars()
 
 
@@ -39,24 +42,23 @@ def generate_config(completed_template, output_path):
 def update_prometheus_config():
     template_dict = get_template(('./templates/prometheus.yml'))
     for job_dict in template_dict["scrape_configs"]:
-        targets_dict_path = ("static_configs", 0, "targets")
         if job_dict["job_name"] == "node":
-            target = f"{env_vars['LOGGING_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
-            job_dict[targets_dict_path] = target
+            target = f"{env_vars['EXPORTER_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
+            job_dict["static_configs"][0]["targets"] = [target]
         elif job_dict["job_name"] == "blockchain":
-            target = f"{env_vars['LOGGING_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
-            job_dict[targets_dict_path] = target
+            target = f"{env_vars['EXPORTER_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
+            job_dict["static_configs"][0]["targets"] = [target]
         elif job_dict["job_name"] == "cadvisor":
-            target = f"{env_vars['LOGGING_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
-            job_dict[targets_dict_path] = target
+            target = f"{env_vars['EXPORTER_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
+            job_dict["static_configs"][0]["targets"] = [target]
         else:
-            print(f"Unexpected prometheus job found in config: {job_name}")
+            print(f"Unexpected prometheus job found in config: {job_dict['job_name']}")
     generate_config(template_dict, Path('./prometheus/prometheus.yml'))
 
 
 def update_loki():
     template_dict = get_template(Path('./templates/loki-config.yml'))
-    template_dict["server"]["http_listen_port"] = env_vars["LOKI_PORT"]
+    template_dict["server"]["http_listen_port"] = int(env_vars["LOKI_PORT"])
     generate_config(template_dict, Path('./loki/loki-config.yml'))
 
 
@@ -86,7 +88,7 @@ def update_root_docker_compose():
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
         port_str = env_vars[f"{service.upper()}_PORT"]
-        template_dict["services"][service]['ports'] = f"{port_str}:{port_str}"
+        template_dict["services"][service]['ports'] = [f"{port_str}:{port_str}"]
     generate_config(template_dict, Path("./docker-compose.yml"))
 
 
