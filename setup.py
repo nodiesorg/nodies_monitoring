@@ -68,7 +68,7 @@ def update_datasource(datasource):
             Path(f'./templates/datasources/{datasource}.yaml'))
         endpoint = env_vars[f"{datasource.upper()}_ENDPOINT"]
         port = env_vars[f"{datasource.upper()}_PORT"]
-        template_dict["datasources"][0]["url"] = f"{endpoint}:{port}"
+        template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
         generate_config(template_dict, Path(
             f"./grafana_provisioning/datasources/{datasource}.yaml"))
 
@@ -80,21 +80,6 @@ def update_alerting_contactpoint():
     generate_config(template_dict, Path(
         './grafana_provisioning/alerting/contactpoint.yaml'))
 
-
-def update_promtail():
-    template_dict = get_template(
-        Path("./templates/clients/promtail-config.yml"))
-    template_dict["clients"][0]["url"] = f"{env_vars['LOKI_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
-    template_dict["server"]["http_listen_port"] = env_vars["PROMTAIL_PORT"]
-    generate_config(template_dict, Path(
-        './clients/promtail/promtail-config.yml'))
-
-
-def update_bcexporter():
-    template_dict = get_template(Path('./templates/clients/config.yml'))
-    template_dict["exporter_port"] = env_vars['BLOCKCHAIN_EXPORTER_PORT']
-    generate_config(template_dict, Path(
-        './clients/bcexporter/config/config.yml'))
 
 
 def update_root_docker_compose():
@@ -112,8 +97,6 @@ def main():
     update_datasource("loki")
     update_datasource("prometheus")
     update_alerting_contactpoint()
-    update_promtail()
-    update_bcexporter()
     update_root_docker_compose()
 
 

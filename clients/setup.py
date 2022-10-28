@@ -36,7 +36,7 @@ def generate_config(completed_template, output_path):
 def update_promtail():
     template_dict = get_template(
         Path("../templates/clients/promtail-config.yml"))
-    template_dict["clients"][0]["url"] = f"{env_vars['LOKI_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
+    template_dict["clients"][0]["url"] = f"http://{env_vars['LOKI_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
     template_dict["server"]["http_listen_port"] = env_vars["PROMTAIL_PORT"]
     generate_config(template_dict, Path('./promtail/promtail-config.yml'))
 
