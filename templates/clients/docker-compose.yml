@@ -9,7 +9,7 @@ services:
     container_name: blockchain_exporter
     image: nodies/blockchain_exporter
     volumes:
-      - ./bcexporter:/usr/app/bc_node_exporter
+      - ./bcexporter/config/chains.json:/usr/app/bc_node_exporter/config/chains.json
     build: ./bcexporter/
     ports:
       - "9877:9877"
