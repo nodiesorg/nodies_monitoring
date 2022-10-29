@@ -1,0 +1,12 @@
+{{ define "slack" }}
+  {{ range .Alerts }}
+            *Summary:* {{ .Annotations.summary }}
+            *Description:* {{ .Annotations.description }}
+            *Severity:* `{{ .Labels.severity }}`
+            *Details:*
+            {{ range .Labels.SortedPairs }} - *{{ .Name }}:* `{{ .Value }}`
+            {{ end }}
+             - *Impact*: {{ .Annotations.impact }}
+             - *Receiver*: warning-{{ .Labels.team }}-slack
+  {{ end }}
+{{ end }}
