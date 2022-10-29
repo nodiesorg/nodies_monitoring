@@ -31,6 +31,6 @@ WORKDIR /usr/app/bc_node_exporter
 ENV PATH=/root/.local:$PATH
 
 # command to run on container start
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["python3", "main.py"]
 
-# docker build --tag nodies/blockchain-exporter:latest .
+# docker build --tag nodies/blockchain_exporter:latest .

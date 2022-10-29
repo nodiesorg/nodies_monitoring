@@ -1,0 +1,78 @@
+version: "3"
+
+networks:
+  logging:
+
+services:
+
+  loki:
+    container_name: loki
+    image: grafana/loki:2.6.1
+    volumes:
+      - ./loki:/etc/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      logging:
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:9.1.6-ubuntu
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana_provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      logging:
+
+  minio:
+    container_name: minio
+    image: minio/minio
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /data/loki-data && \
+        mkdir -p /data/loki-ruler &&
+        minio server /data
+    environment:
+      - MINIO_ACCESS_KEY=loki
+      - MINIO_SECRET_KEY=supersecret
+      - MINIO_PROMETHEUS_AUTH_TYPE=public
+      - MINIO_UPDATE=off
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./.data/minio:/data
+    networks:
+      logging:
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.37.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command: --config.file=/etc/prometheus//prometheus.yml --storage.tsdb.path=/prometheus --web.console.libraries=/usr/share/prometheus/console_libraries --web.console.templates=/usr/share/prometheus/consoles
+    restart: unless-stopped
+    networks:
+      logging:
+
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager:v0.24.0
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      logging:
