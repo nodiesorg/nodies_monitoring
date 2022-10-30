@@ -16,6 +16,6 @@ chains.json
 /clients/docker-compose.yml
 /clients/promtail/promtail-config.yml
 /clients/bcexporter/config/config.yml
-/clients/log/*
+/clients/log/*.log
 
 notes.md

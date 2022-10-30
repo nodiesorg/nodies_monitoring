@@ -85,7 +85,7 @@ pip3 install -r requirements.txt
 
 ## Setup
 
-Our project is split into a monitoring stack, and a exporter stack.
+Our project is split into a server(monitoring) stack, and a client(exporter) stack.
 
 ### .env
 
@@ -94,8 +94,8 @@ Create a .env file in the root [nodies_monitoring](./) folder
 This step is required on both the monitoring and the exporter stack.
 
 ```
-MONITORING_ENDPOINT=111.222.333.001
-EXPORTER_ENDPOINT=111.222.333.002
+SERVER_ENDPOINT=111.222.333.001
+CLIENT_ENDPOINT=111.222.333.002
 SLACK_WEBHOOK=https://hooks.slack.com/services/your_slack_webhook_string
 
 LOKI_PORT=3100
@@ -169,6 +169,23 @@ Change directory into the [clients](./clients) subfolder, and run [setup.py](./c
 cd nodies_monitoring/clients && python3 setup.py
 ```
 
+<details>
+<summary>Optional CLI flag</summary>
+
+- `--clients`
+  - Allows control over which clients are ran on the exporter stack
+  - Services available:
+    - blockchain_exporter
+    - promtail
+    - cadvisor
+    - node_exporter
+
+Example
+```bash
+cd nodies_monitoring/clients && python3 setup.py --clients node_exporter
+```
+</details>
+
 Boot up all client services
 ```bash
 docker compose up
@@ -195,7 +212,7 @@ To add additional dashboards, please refer to [grafana dashboard documentation](
 
 #### Pokt Log
 
-*Image goes here*
+![Pokt Log](./img/pokt_log.png)
 
 #### Machine Metrics
 
