@@ -25,6 +25,7 @@ services:
       - ./grafana_provisioning:/etc/grafana/provisioning
     ports:
       - "3000:3000"
+    user: '0'
     restart: unless-stopped
     networks:
       logging:
