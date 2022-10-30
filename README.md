@@ -8,8 +8,8 @@ Nodies Monitoring is a customizable and extensible monitoring solution for monit
     - [Docker Dependencies](#docker-dependencies)
     - [Nodies Monitoring](#nodies-monitoring)
 - [Setup](#setup)
-    - [chains.json](#chainsjson)
     - [.env](#env)
+    - [chains.json](#chainsjson)
     - [Promtail Logs](#promtail-logs)
     - [Yaml Setup and Startup](#yaml-setup-and-startup)
 - [Customization](#customization)
@@ -85,27 +85,13 @@ pip3 install -r requirements.txt
 
 ## Setup
 
-### chains.json
-
-<details>
-<summary>Supported Blockchains</summary>
-
-- harmony
-- polygon
-- xdai
-- eth
-- bsc
-- swimmer
-- avax
-- dfk
-- other EVM chains should work but not tested
-</details>
-
-Copy your chains.json to [./clients/bcexporter/config](clients/bcexporter/config/)
+Our project is split into a monitoring stack, and a exporter stack.
 
 ### .env
 
 Create a .env file in the root [nodies_monitoring](./) folder
+
+This step is required on both the monitoring and the exporter stack.
 
 ```
 MONITORING_ENDPOINT=111.222.333.001
@@ -129,6 +115,26 @@ PROMTAIL_PORT=9080
 - Update EXPORTER_ENDPOINT with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 
 - Update SLACK_WEBHOOK with the webhook of the slack channel to send grafana-managed alerts to
+
+### chains.json
+
+<details>
+<summary>Supported Blockchains</summary>
+
+- harmony
+- polygon
+- xdai
+- eth
+- bsc
+- swimmer
+- avax
+- dfk
+- other EVM chains should work but not tested
+</details>
+
+Copy your chains.json to [./clients/bcexporter/config](clients/bcexporter/config/)
+
+This step is only required on the exporter stack.
 
 ### Promtail Logs
 
@@ -163,7 +169,7 @@ Change directory into the [clients](./clients) subfolder, and run [setup.py](./c
 cd nodies_monitoring/clients && python3 setup.py
 ```
 
-Boot up all server services
+Boot up all client services
 ```bash
 docker compose up
 ```
