@@ -70,7 +70,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 Git pulldown nodies monitoring project
 ```bash
-git clone --branch main https://YuppiePF@github.com/baaspoolsllc/nodies_monitoring.git
+git clone --branch main https://github.com/baaspoolsllc/nodies_monitoring.git
 ```
 
 Install python3-pip
