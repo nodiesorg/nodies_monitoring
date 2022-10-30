@@ -12,7 +12,7 @@ Nodies Monitoring is a customizable and extensible monitoring solution for monit
     - [.env](#env)
     - [Promtail Logs](#promtail-logs)
     - [Yaml Setup and Startup](#yaml-setup-and-startup)
-- [Examples](#examples)
+- [Customization](#customization)
     - [Datasources](#datasources)
     - [Dashboards](#dashboards)
     - [Alerts](#alerts)
@@ -169,7 +169,7 @@ docker compose up
 ```
 </details>
 
-## Examples
+## Customization
 
 ### Datasources
 
