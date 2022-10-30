@@ -10,6 +10,7 @@ Nodies Monitoring is a customizable and extensible monitoring solution for monit
 - [Setup](#setup)
     - [chains.json](#chainsjson)
     - [.env](#env)
+    - [Promtail Logs](#promtail-logs)
     - [Yaml Setup and Startup](#yaml-setup-and-startup)
 - [Examples](#examples)
     - [Datasources](#datasources)
@@ -128,6 +129,10 @@ PROMTAIL_PORT=9080
 - Update EXPORTER_ENDPOINT with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 
 - Update SLACK_WEBHOOK with the webhook of the slack channel to send grafana-managed alerts to
+
+### Promtail Logs
+
+**Note:** Logs are expected by default to be located in [./clients/log/](./clients/log)
 
 ### Yaml Setup and Startup
 
