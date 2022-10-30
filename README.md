@@ -110,9 +110,9 @@ CADVISOR_EXPORTER_PORT=8080
 PROMTAIL_PORT=9080
 ```
 
-- Update MONITORING_ENDPOINT with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
+- Update SERVER_ENDPOINT with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
 
-- Update EXPORTER_ENDPOINT with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
+- Update CLIENT_ENDPOINT with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 
 - Update SLACK_WEBHOOK with the webhook of the slack channel to send grafana-managed alerts to
 
