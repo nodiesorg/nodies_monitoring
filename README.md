@@ -143,9 +143,9 @@ This step is only required on the exporter stack.
 ### Yaml Setup and Startup
 
 <details>
-<summary>Monitoring</summary>
+<summary>Server</summary>
 
-SSH into your monitoring host
+SSH into your server host
 
 Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
 ```bash
@@ -159,9 +159,9 @@ docker compose up
 </details>
 
 <details>
-<summary>Exporter</summary>
+<summary>Client</summary>
 
-SSH into your exporter host
+SSH into your client host
 
 Change directory into the [clients](./clients) subfolder, and run [setup.py](./clients/setup.py)
 
