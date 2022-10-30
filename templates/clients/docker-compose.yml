@@ -11,6 +11,7 @@ services:
     volumes:
       - ./bcexporter/config/chains.json:/usr/app/bc_node_exporter/config/chains.json
     build: ./bcexporter/
+    working_dir: /usr/app/bc_node_exporter/
     ports:
       - "9877:9877"
     networks:
