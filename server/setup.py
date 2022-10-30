@@ -1,8 +1,9 @@
-from pathlib import Path
-import yaml
 import os
-from dotenv import load_dotenv
+import stat
+from pathlib import Path
 
+import yaml
+from dotenv import load_dotenv
 
 '''
 This method parses several environment variables and returns the values in a dictionary.
@@ -90,6 +91,12 @@ def update_root_docker_compose():
     generate_config(template_dict, Path("docker-compose.yml"))
 
 
+def update_grafana_folder_permissions():
+    grafana_path = Path('./grafana/')
+    os.chown(grafana_path, 472, -1)
+    os.chmod(grafana_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+
+
 def main():
     update_prometheus_config()
     update_loki()
@@ -98,6 +105,7 @@ def main():
     update_datasource("alertmanager")
     update_alerting_contactpoint()
     update_root_docker_compose()
+    update_grafana_folder_permissions()
 
 
 if __name__ == "__main__":
