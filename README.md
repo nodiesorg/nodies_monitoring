@@ -6,16 +6,23 @@ Our project is split into a server(monitoring) stack, and a client(exporter) sta
 
 Please see [architecture documentation](./architecture.md) for more details.
 
+Pokt Log Monitoring            |  Chain Monitoring
+:-------------------------:|:-------------------------:
+![Pokt Log](documentation/dashboards/pokt_log.png)  |  ![Chain Metrics](documentation/dashboards/chain_metrics.png)
+
+
+
 ## Table of content
 
 - [Installation](#installation)
     - [Dependencies](#dependencies)
     - [Nodies Monitoring](#nodies-monitoring)
-- [Setup](#setup)
+- [Getting started](#getting-started)
     - [.env](#env)
-    - [chains.json](#chainsjson)
-    - [Promtail Logs](#promtail-logs)
-    - [Yaml Setup and Startup](#yaml-setup-and-startup)
+    - [Server Setup](#server-setup)
+    - [Client Setup](#client-setup)
+    - [Supported Chains](#supported-chains)
+    - [Run Individual Clients](#run-individual-clients)
 - [Customization](#customization)
     - [Datasources](#datasources)
     - [Dashboards](#dashboards)
@@ -97,7 +104,7 @@ Install requirements
 pip3 install -r requirements.txt
 ```
 
-## Setup
+## Getting Started
 
 ### .env
 
@@ -111,13 +118,45 @@ Modify values for the included template [.env.template](./templates/.env.templat
 
 - Update SLACK_WEBHOOK with the webhook of the slack channel to send grafana-managed alerts to
 
-### chains.json
 
-**NOTE:** This step is only required on the client stack.
 
-<details>
-<summary>Supported Blockchains</summary>
+### Server setup 
 
+- SSH into your server host
+
+- Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
+```bash
+cd nodies_monitoring/server && python3 setup.py
+```
+
+- Boot up all server services
+```bash
+docker compose up
+```
+
+### Client setup
+
+1. SSH into your client host
+
+2.  Modify values for the included [chains.example.json](./templates/chains.example.json). 
+
+
+**Note:** Logs are expected by default to be located in [./clients/log/](./clients/log)
+
+3. Change directory into the [clients](./clients) subfolder, and run [setup.py](./clients/setup.py)
+
+```bash
+cd nodies_monitoring/clients && python3 setup.py
+```
+
+
+4. Boot up all client services
+```bash
+docker compose up
+```
+</details>
+
+## Supported Chains
 - harmony
 - polygon
 - xdai
@@ -126,46 +165,10 @@ Modify values for the included template [.env.template](./templates/.env.templat
 - swimmer
 - avax
 - dfk
-- other EVM chains should work but not tested
-</details>
+- other evms should work but not tested```
 
-Modify values for the included [chains.example.json](./templates/chains.example.json)
-
-### Promtail Logs
-
-**Note:** Logs are expected by default to be located in [./clients/log/](./clients/log)
-
-### Yaml Setup and Startup
-
-<details>
-<summary>Server</summary>
-
-SSH into your server host
-
-Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
-```bash
-cd nodies_monitoring/server && python3 setup.py
-```
-
-Boot up all server services
-```bash
-docker compose up
-```
-</details>
-
-<details>
-<summary>Client</summary>
-
-SSH into your client host
-
-Change directory into the [clients](./clients) subfolder, and run [setup.py](./clients/setup.py)
-
-```bash
-cd nodies_monitoring/clients && python3 setup.py
-```
-
-<details>
-<summary>Optional CLI flag</summary>
+## Run individual clients
+ [setup.py](./clients/setup.py) has an optional CLI flag that allows specific clients to be ran.
 
 - `--clients`
   - Allows control over which clients are ran on the exporter stack
@@ -174,18 +177,6 @@ cd nodies_monitoring/clients && python3 setup.py
     - promtail
     - cadvisor
     - node_exporter
-
-Example
-```bash
-cd nodies_monitoring/clients && python3 setup.py --clients node_exporter
-```
-</details>
-
-Boot up all client services
-```bash
-docker compose up
-```
-</details>
 
 ## Customization
 
@@ -201,13 +192,15 @@ Default dashboards have been provisioned in [./server/grafana/dashboards](./serv
 
 To add additional dashboards, please refer to [grafana dashboard documentation](https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards)
 
+#### Pokt Log
+
+![Pokt Log](documentation/dashboards/pokt_log.png)
+
+
 #### Chain Metrics
 
 ![Chain Metrics](documentation/dashboards/chain_metrics.png)
 
-#### Pokt Log
-
-![Pokt Log](documentation/dashboards/pokt_log.png)
 
 #### Machine Metrics
 
