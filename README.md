@@ -2,10 +2,30 @@
 
 Nodies Monitoring is a customizable and extensible monitoring solution for monitoring host machine metrics, container metrics, node status and node logs. 
 
+Our project is split into a server(monitoring) stack, and a client(exporter) stack.
+
+The server stack includes:
+
+| Service    | Description              |
+|------------|--------------------------|
+| Grafana    | Analytics and Monitoring |
+| Minio      | Object Storage           |
+| Loki       | Log Aggregation          |
+| Prometheus | Time Series Aggregation  |
+
+The client stack can include:
+
+| Service             | Description        |
+|---------------------|--------------------|
+| Blockchain Exporter | Blockchain Metrics |
+| Node Exporter       | Machine Metrics    |
+| CAdvisor            | Container Metrics  |
+| Promtail            | Log Shipper        |
+
 ## Table of content
 
 - [Installation](#installation)
-    - [Docker Dependencies](#docker-dependencies)
+    - [Dependencies](#dependencies)
     - [Nodies Monitoring](#nodies-monitoring)
 - [Setup](#setup)
     - [.env](#env)
@@ -21,11 +41,21 @@ Nodies Monitoring is a customizable and extensible monitoring solution for monit
 
 ## Installation
 
+**NOTE:** These dependencies are required on both the server and client stack.
+
 **Note:** Tested and recommended installation on Ubuntu 22.04.1 LTS host OS
 
-### Docker Dependencies
+### Dependencies
+
 <details>
-<summary>Optional section for fresh install</summary>
+<summary>Python</summary>
+
+<a href="https://www.python.org/downloads/release/python-3106/">Python 3.10.6</a>
+
+</details>
+
+<details>
+<summary>Docker</summary>
 
 Uninstall existing docker
 ```bash
@@ -85,30 +115,11 @@ pip3 install -r requirements.txt
 
 ## Setup
 
-Our project is split into a server(monitoring) stack, and a client(exporter) stack.
-
 ### .env
 
-Create a .env file in the root [nodies_monitoring](./) folder
+**NOTE:** This step is required on both the server and the client stack.
 
-This step is required on both the monitoring and the exporter stack.
-
-```
-SERVER_ENDPOINT=111.222.333.001
-CLIENT_ENDPOINT=111.222.333.002
-SLACK_WEBHOOK=https://hooks.slack.com/services/your_slack_webhook_string
-
-LOKI_PORT=3100
-PROMETHEUS_PORT=9090
-GRAFANA_PORT=3000
-MINIO_PORT=9000
-ALERTMANAGER_PORT=9093
-
-BLOCKCHAIN_EXPORTER_PORT=9877
-NODE_EXPORTER_PORT=9100
-CADVISOR_EXPORTER_PORT=8080
-PROMTAIL_PORT=9080
-```
+Modify values for the included template [.env.template](./templates/.env.template) file
 
 - Update SERVER_ENDPOINT with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
 
@@ -117,6 +128,8 @@ PROMTAIL_PORT=9080
 - Update SLACK_WEBHOOK with the webhook of the slack channel to send grafana-managed alerts to
 
 ### chains.json
+
+**NOTE:** This step is only required on the client stack.
 
 <details>
 <summary>Supported Blockchains</summary>
@@ -132,9 +145,7 @@ PROMTAIL_PORT=9080
 - other EVM chains should work but not tested
 </details>
 
-Copy your chains.json to [./clients/bcexporter/config](clients/bcexporter/config/)
-
-This step is only required on the exporter stack.
+Modify values for the included [chains.example.json](./templates/chains.example.json)
 
 ### Promtail Logs
 

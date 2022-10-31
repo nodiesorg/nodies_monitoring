@@ -1,7 +1,7 @@
 import os
 import stat
 from pathlib import Path
-
+import shutil
 import yaml
 from dotenv import load_dotenv
 
@@ -22,6 +22,7 @@ def _get_env_vars():
     return env_var_dict
 
 
+shutil.copyfile(Path('../templates/.env.template'), Path('../.env'))
 load_dotenv()
 env_vars = _get_env_vars()
 

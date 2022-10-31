@@ -1,7 +1,8 @@
-import argparse
-import yaml
-from pathlib import Path
 import os
+import argparse
+from pathlib import Path
+import shutil
+import yaml
 from dotenv import load_dotenv
 
 '''
@@ -19,6 +20,9 @@ def _get_env_vars():
         env_var_dict[env_var] = os.getenv(env_var)
     return env_var_dict
 
+
+shutil.copyfile(Path('../templates/.env.template'), Path('../.env'))
+shutil.copyfile(Path('../templates/chains.example.json'), Path('./bcexporter/config/chains.json'))
 load_dotenv()
 env_vars = _get_env_vars()
 
