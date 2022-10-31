@@ -156,7 +156,7 @@ docker compose up
 - swimmer
 - avax
 - dfk
-- other evms should work but not tested```
+- other evms should work but not tested
 
 ## Run individual clients
  [setup.py](./clients/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack
