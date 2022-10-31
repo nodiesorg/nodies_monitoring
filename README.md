@@ -4,23 +4,7 @@ Nodies Monitoring is a customizable and extensible monitoring solution for monit
 
 Our project is split into a server(monitoring) stack, and a client(exporter) stack.
 
-The server stack includes:
-
-| Service    | Description              |
-|------------|--------------------------|
-| Grafana    | Analytics and Monitoring |
-| Minio      | Object Storage           |
-| Loki       | Log Aggregation          |
-| Prometheus | Time Series Aggregation  |
-
-The client stack can include:
-
-| Service             | Description        |
-|---------------------|--------------------|
-| Blockchain Exporter | Blockchain Metrics |
-| Node Exporter       | Machine Metrics    |
-| CAdvisor            | Container Metrics  |
-| Promtail            | Log Shipper        |
+Please see [architecture documentation](./architecture.md) for more details.
 
 ## Table of content
 
@@ -219,19 +203,19 @@ To add additional dashboards, please refer to [grafana dashboard documentation](
 
 #### Chain Metrics
 
-![Chain Metrics](./img/chain_metrics.png)
+![Chain Metrics](documentation/dashboards/chain_metrics.png)
 
 #### Pokt Log
 
-![Pokt Log](./img/pokt_log.png)
+![Pokt Log](documentation/dashboards/pokt_log.png)
 
 #### Machine Metrics
 
-![Machine Metrics](./img/machine_metrics.png)
+![Machine Metrics](documentation/dashboards/machine_metrics.png)
 
 #### Container Metrics
 
-![Container Metrics](./img/container_metrics.png)
+![Container Metrics](documentation/dashboards/container_metrics.png)
 
 ### Alerts
 
