@@ -16,7 +16,6 @@ Pokt Log Monitoring            |  Chain Monitoring
 
 - [Installation](#installation)
     - [Dependencies](#dependencies)
-    - [Nodies Monitoring](#nodies-monitoring)
 - [Getting started](#getting-started)
     - [.env](#env)
     - [Server Setup](#server-setup)
@@ -27,7 +26,6 @@ Pokt Log Monitoring            |  Chain Monitoring
     - [Datasources](#datasources)
     - [Dashboards](#dashboards)
     - [Alerts](#alerts)
-- [License](#license)
 - [Links/Contact](#linkscontact)
 
 ## Installation
@@ -86,13 +84,6 @@ Install latest docker
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 </details>
-
-### Nodies Monitoring
-
-Git pulldown nodies monitoring project
-```bash
-git clone --branch main https://github.com/baaspoolsllc/nodies_monitoring.git
-```
 
 Install python3-pip
 ```bash
@@ -168,15 +159,11 @@ docker compose up
 - other evms should work but not tested```
 
 ## Run individual clients
- [setup.py](./clients/setup.py) has an optional CLI flag that allows specific clients to be ran.
+ [setup.py](./clients/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack
 
-- `--clients`
-  - Allows control over which clients are ran on the exporter stack
-  - Services available:
-    - blockchain_exporter
-    - promtail
-    - cadvisor
-    - node_exporter
+`--clients blockchain_exporter, promtail cadvisor, node_exporter`
+
+
 
 ## Customization
 
@@ -216,9 +203,6 @@ Default alerting has been provisioned in [./server/grafana_provisioning/alerting
 
 To add additional alerting, please refer to [grafana alerting documentation](https://grafana.com/docs/grafana/latest/administration/provisioning/#alerting)
 
-## License
-
-The nodies monitoring project is licensed under the terms of the *LICENSE GOES HERE*.
 
 ## Links/Contact
 
