@@ -1,10 +1,13 @@
-# Nodies Monitoring (WIP README)
+# Nodies Monitoring
 
 Nodies Monitoring is a customizable and extensible monitoring solution for monitoring host machine metrics, container metrics, node status and node logs. 
 
 Our project is split into a server (monitoring) stack, and a client (exporter) stack.
 
 Please see [architecture documentation](./architecture.md) for a deeper analysis of the server/client stack.
+
+## Want to Contribute?
+TBD instructions on how to contribute to this project.
 
 ## Table of content
 
