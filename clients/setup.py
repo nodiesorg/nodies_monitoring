@@ -1,7 +1,7 @@
-import argparse
-import yaml
-from pathlib import Path
 import os
+import argparse
+from pathlib import Path
+import yaml
 from dotenv import load_dotenv
 
 '''
@@ -11,15 +11,16 @@ This method parses several environment variables and returns the values in a dic
 
 def _get_env_vars():
     env_vars = [
-        "BLOCKCHAIN_EXPORTER_ENDPOINT",
-        "BLOCKCHAIN_EXPORTER_PORT", "PROMTAIL_PORT", "MONITORING_ENDPOINT", "LOKI_PORT"
+        "CLIENT_ENDPOINT", "SERVER_ENDPOINT"
+        , "BLOCKCHAIN_EXPORTER_PORT", "PROMTAIL_PORT", "LOKI_PORT"
     ]
     env_var_dict = {}
     for env_var in env_vars:
         env_var_dict[env_var] = os.getenv(env_var)
     return env_var_dict
 
-load_dotenv()
+
+load_dotenv(dotenv_path=Path('../.env'))
 env_vars = _get_env_vars()
 
 
@@ -37,7 +38,7 @@ def generate_config(completed_template, output_path):
 def update_promtail():
     template_dict = get_template(
         Path("../templates/clients/promtail-config.yml"))
-    template_dict["clients"][0]["url"] = f"http://{env_vars['MONITORING_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
+    template_dict["clients"][0]["url"] = f"http://{env_vars['SERVER_ENDPOINT']}:{env_vars['LOKI_PORT']}/loki/api/v1/push"
     template_dict["server"]["http_listen_port"] = int(env_vars["PROMTAIL_PORT"])
     generate_config(template_dict, Path('./promtail/promtail-config.yml'))
 

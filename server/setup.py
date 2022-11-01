@@ -1,7 +1,6 @@
 import os
 import stat
 from pathlib import Path
-
 import yaml
 from dotenv import load_dotenv
 
@@ -14,7 +13,7 @@ def _get_env_vars():
     env_vars = [
         "NODE_EXPORTER_PORT", "BLOCKCHAIN_EXPORTER_PORT", "CADVISOR_EXPORTER_PORT"
         , "LOKI_PORT", "PROMETHEUS_PORT", "GRAFANA_PORT", "MINIO_PORT", "ALERTMANAGER_PORT"
-        , "PROMTAIL_PORT", "SLACK_WEBHOOK", "MONITORING_ENDPOINT", "EXPORTER_ENDPOINT"
+        , "PROMTAIL_PORT", "SLACK_WEBHOOK", "SERVER_ENDPOINT", "CLIENT_ENDPOINT"
     ]
     env_var_dict = {}
     for env_var in env_vars:
@@ -22,7 +21,7 @@ def _get_env_vars():
     return env_var_dict
 
 
-load_dotenv()
+load_dotenv(dotenv_path=Path('../.env'))
 env_vars = _get_env_vars()
 
 
@@ -41,13 +40,13 @@ def update_prometheus_config():
     template_dict = get_template(Path('../templates/prometheus.yml'))
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
-            target = f"{env_vars['EXPORTER_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
+            target = f"{env_vars['CLIENT_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
             job_dict["static_configs"][0]["targets"] = [target]
         elif job_dict["job_name"] == "blockchain":
-            target = f"{env_vars['EXPORTER_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
+            target = f"{env_vars['CLIENT_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
             job_dict["static_configs"][0]["targets"] = [target]
         elif job_dict["job_name"] == "cadvisor":
-            target = f"{env_vars['EXPORTER_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
+            target = f"{env_vars['CLIENT_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
             job_dict["static_configs"][0]["targets"] = [target]
         else:
             print(f"Unexpected prometheus job found in config: {job_dict['job_name']}")
@@ -67,7 +66,7 @@ def update_datasource(datasource):
     else:
         template_dict = get_template(
             Path(f'../templates/datasources/{datasource}.yaml'))
-        endpoint = env_vars["MONITORING_ENDPOINT"]
+        endpoint = env_vars["SERVER_ENDPOINT"]
         port = env_vars[f"{datasource.upper()}_PORT"]
         template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
         generate_config(template_dict, Path(
