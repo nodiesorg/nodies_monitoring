@@ -1,7 +1,6 @@
 import os
 import stat
 from pathlib import Path
-import shutil
 import yaml
 from dotenv import load_dotenv
 
