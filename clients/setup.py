@@ -21,9 +21,7 @@ def _get_env_vars():
     return env_var_dict
 
 
-shutil.copyfile(Path('../templates/.env.template'), Path('../.env'))
-shutil.copyfile(Path('../templates/chains.example.json'), Path('./bcexporter/config/chains.json'))
-load_dotenv()
+load_dotenv(dotenv_path=Path('../.env'))
 env_vars = _get_env_vars()
 
 
