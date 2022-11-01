@@ -14,7 +14,7 @@ TBD instructions on how to contribute to this project.
 - [Installation](#installation)
     - [Dependencies](#dependencies)
 - [Getting started](#getting-started)
-    - [Environment Vars Setup](#environment-vars-setup)
+    - [Environment Vars Setup](#environment-vars-setup-required)
     - [Server Setup](#server-setup)
     - [Client Setup](#client-setup)
     - [Run Individual Clients](#run-individual-clients)
@@ -97,7 +97,7 @@ pip3 install -r requirements.txt
 
 **NOTE:** This step is required on both the server and the client stack. When setting up this stack, you should follow the principles of least privilege when allowing users to access your exposed ports by setting up network or host based firewalls.
 
-1. Create an `.env` file in `./templates/`. An example template file, `./templates/.env.template` is provided
+1. Create an `.env` file in project root. An example template file, `./templates/.env.template` is provided
 2. Update `SERVER_ENDPOINT` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
 3. Update `CLIENT_ENDPOINT` with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 4. Update `SLACK_WEBHOOK` with the webhook of the slack channel to send grafana-managed alerts to.
@@ -112,6 +112,7 @@ On your monitoring server:
 ```bash
 cd nodies_monitoring/server && python3 setup.py
 ```
+
 2. Boot up all server services
 ```bash
 docker compose up -d
@@ -158,7 +159,6 @@ docker compose up -d
 cd nodies_monitoring/clients && python3 setup.py
 docker compose up -d
 ```
-</details>
 
 ## Run individual clients
  [setup.py](./clients/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
