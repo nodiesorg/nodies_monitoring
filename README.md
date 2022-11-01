@@ -178,6 +178,18 @@ Default dashboards have been provisioned in [./server/grafana/dashboards](./serv
 
 To add additional dashboards, please refer to [grafana dashboard documentation](https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards)
 
+### Alerts
+
+Default alerting has been provisioned in [./server/grafana_provisioning/alerting](./server/grafana_provisioning/alerting)
+
+To add additional alerting, please refer to [grafana alerting documentation](https://grafana.com/docs/grafana/latest/administration/provisioning/#alerting)
+
+## Links/Contact
+
+For any inquiries, please reach out to PoktBlade(PoktBlade#5970) or poktdachi(dachi#0005) on the pokt discord
+
+[![](https://dcbadge.vercel.app/api/server/pokt)](https://discord.gg/pokt)
+
 #### Pokt Log
 
 ![Pokt Log](documentation/dashboards/pokt_log.png)
@@ -196,15 +208,3 @@ To add additional dashboards, please refer to [grafana dashboard documentation](
 
 ![Container Metrics](documentation/dashboards/container_metrics.png)
 
-### Alerts
-
-Default alerting has been provisioned in [./server/grafana_provisioning/alerting](./server/grafana_provisioning/alerting)
-
-To add additional alerting, please refer to [grafana alerting documentation](https://grafana.com/docs/grafana/latest/administration/provisioning/#alerting)
-
-
-## Links/Contact
-
-For any inquiries, please reach out to PoktBlade(PoktBlade#5970) or poktdachi(dachi#0005) on the pokt discord
-
-[![](https://dcbadge.vercel.app/api/server/pokt)](https://discord.gg/pokt)
