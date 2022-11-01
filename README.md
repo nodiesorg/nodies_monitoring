@@ -1,26 +1,19 @@
-### [README still WIP, not contribution friendly yet]
+# Nodies Monitoring (WIP README)
 
 Nodies Monitoring is a customizable and extensible monitoring solution for monitoring host machine metrics, container metrics, node status and node logs. 
 
-Our project is split into a server(monitoring) stack, and a client(exporter) stack.
+Our project is split into a server (monitoring) stack, and a client (exporter) stack.
 
-Please see [architecture documentation](./architecture.md) for more details.
-
-Pokt Log Monitoring            |  Chain Monitoring
-:-------------------------:|:-------------------------:
-![Pokt Log](documentation/dashboards/pokt_log.png)  |  ![Chain Metrics](documentation/dashboards/chain_metrics.png)
-
-
+Please see [architecture documentation](./architecture.md) for a deeper analysis of the server/client stack.
 
 ## Table of content
 
 - [Installation](#installation)
     - [Dependencies](#dependencies)
 - [Getting started](#getting-started)
-    - [.env](#env)
+    - [Environment Vars Setup](#environment-vars-setup)
     - [Server Setup](#server-setup)
     - [Client Setup](#client-setup)
-    - [Supported Chains](#supported-chains)
     - [Run Individual Clients](#run-individual-clients)
 - [Customization](#customization)
     - [Datasources](#datasources)
@@ -97,73 +90,79 @@ pip3 install -r requirements.txt
 
 ## Getting Started
 
-### .env
+### Environment Vars Setup (REQUIRED)
 
-**NOTE:** This step is required on both the server and the client stack.
+**NOTE:** This step is required on both the server and the client stack. When setting up this stack, you should follow the principles of least privilege when allowing users to access your exposed ports by setting up network or host based firewalls.
 
-Modify values for the included template [.env.template](./templates/.env.template) file
+1. Create an `.env` file in `./templates/`. An example template file, `./templates/.env.template` is provided
+2. Update `SERVER_ENDPOINT` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
+3. Update `CLIENT_ENDPOINT` with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
+4. Update `SLACK_WEBHOOK` with the webhook of the slack channel to send grafana-managed alerts to.
 
-- Update SERVER_ENDPOINT with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
-
-- Update CLIENT_ENDPOINT with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
-
-- Update SLACK_WEBHOOK with the webhook of the slack channel to send grafana-managed alerts to
-
-
+---
 
 ### Server setup 
 
-- SSH into your server host
+On your monitoring server:
 
-- Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
+1. Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
 ```bash
 cd nodies_monitoring/server && python3 setup.py
 ```
-
-- Boot up all server services
+2. Boot up all server services
 ```bash
-docker compose up
+docker compose up -d
 ```
-
+----
 ### Client setup
 
-1. SSH into your client host
+#### Blockchain exporter setup
 
-2.  Modify values for the included [chains.example.json](./templates/chains.example.json). 
+1. Include your blockchain accessible endpoints inside a `chains.json` (./templates/chains.json) file. An example file is provided for you in `chains.example.json`.
 
+2. Change directory into the [clients](./clients) subfolder, and run [setup.py](./clients/setup.py)
 
-**Note:** Logs are expected by default to be located in [./clients/log/](./clients/log)
+#### Log aggregation setup (Promtail)
+1. Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) are formatted with the following format:
+```
+    log_format json_combined escape=json
+    '{'
+        '"time_local":"$time_local",'
+        '"request":"$scheme://$host$request_uri",'
+        '"method":"$request_method",'
+        '"protocol":"$server_protocol",'
+        '"status":"$status",'
+        '"request_body":"$request_body",'
+        '"body_bytes_sent":"$body_bytes_sent",'
+        '"http_referrer":"$http_referer",'
+        '"http_user_agent":"$http_user_agent",'
+        '"upstream_addr":"$upstream_addr",'
+        '"upstream_status":"$upstream_status",'
+        '"remote_addr":"$remote_addr",'
+        '"remote_user":"$remote_user",'
+        '"upstream_response_time":"$upstream_response_time",'
+        '"upstream_connect_time":"$upstream_connect_time",'
+        '"upstream_header_time":"$upstream_header_time",'
+        '"request_time":"$request_time"'
+    '}';
+```
+2. Logs are expected by default to be stored in [./clients/log/](./clients/log)
 
-3. Change directory into the [clients](./clients) subfolder, and run [setup.py](./clients/setup.py)
+---
 
+### Spinning up the client stack
 ```bash
 cd nodies_monitoring/clients && python3 setup.py
-```
-
-
-4. Boot up all client services
-```bash
-docker compose up
+docker compose up -d
 ```
 </details>
 
-## Supported Chains
-- harmony
-- polygon
-- xdai
-- eth
-- bsc
-- swimmer
-- avax
-- dfk
-- other evms should work but not tested
-
 ## Run individual clients
- [setup.py](./clients/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack
+ [setup.py](./clients/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
 
-`--clients blockchain_exporter, promtail cadvisor, node_exporter`
+`python3 setup.py --clients blockchain_exporter, cadvisor, node_exporter`
 
-
+---
 
 ## Customization
 
