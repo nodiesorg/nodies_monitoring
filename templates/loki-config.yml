@@ -73,16 +73,3 @@ limits_config:
 compactor:
   working_directory: /tmp/compactor
   shared_store: s3
-
-ruler:
-  storage:
-    type: local
-    local:
-      directory: /etc/loki/rules
-  rule_path: /tmp/loki/rules-temp
-  alertmanager_url: http://alertmanager:9093
-  ring:
-    kvstore:
-      store: inmemory
-  enable_api: true
-  enable_alertmanager_v2: true

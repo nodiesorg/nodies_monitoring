@@ -77,11 +77,19 @@ def update_server_docker_compose():
     generate_config(template_dict, Path("server/docker-compose.yml"))
 
 
-def update_grafana_folder_permissions():
-    grafana_path = Path('server/grafana/')
-    os.chown(grafana_path, 472, -1)
-    os.chmod(grafana_path, stat.S_IRWXU |
-             stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+def recursive_update_permissions(path, user_id, perms):
+    # update root directory
+    os.chown(path, user_id, -1)
+    os.chmod(path, perms)
+    for root, dirs, files in os.walk(path):
+        # update sub directories
+        for dir in dirs:
+            os.chown(os.path.join(root, dir), user_id, -1)
+            os.chmod(os.path.join(root, dir), perms)
+        # update sub files
+        for file in files:
+            os.chown(os.path.join(root, file), user_id, -1)
+            os.chmod(os.path.join(root, file), perms)
 
 
 # client update methods
@@ -154,7 +162,7 @@ def main():
     update_datasource("prometheus")
     update_alerting_contactpoint()
     update_server_docker_compose()
-    update_grafana_folder_permissions()
+    recursive_update_permissions(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
 if __name__ == "__main__":
