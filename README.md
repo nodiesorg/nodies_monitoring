@@ -14,7 +14,7 @@ TBD instructions on how to contribute to this project.
 - [Installation](#installation)
     - [Dependencies](#dependencies)
 - [Getting started](#getting-started)
-    - [Environment Vars Setup](#environment-vars-setup-required)
+    - [Settings](#settings-required)
     - [Server Setup](#server-setup)
     - [Client Setup](#client-setup)
     - [Run Individual Clients](#run-individual-clients)
@@ -93,14 +93,14 @@ pip3 install -r requirements.txt
 
 ## Getting Started
 
-### Environment Vars Setup (REQUIRED)
+### Settings (REQUIRED)
 
 **NOTE:** This step is required on both the server and the client stack. When setting up this stack, you should follow the principles of least privilege when allowing users to access your exposed ports by setting up network or host based firewalls.
 
-1. Create an `.env` file in project root. An example template file, `./templates/.env.template` is provided
-2. Update `SERVER_ENDPOINT` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
-3. Update `CLIENT_ENDPOINT` with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
-4. Update `SLACK_WEBHOOK` with the webhook of the slack channel to send grafana-managed alerts to.
+1. Edit the [settings](./server/settings.yml)
+2. Update `server.endpoint` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
+3. Update `clients.endpoint` with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
+4. Update `server.slack.webhook` with the webhook of the slack channel to send grafana-managed alerts to.
 
 ---
 
@@ -108,23 +108,22 @@ pip3 install -r requirements.txt
 
 On your monitoring server:
 
-1. Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
+1. Run [setup.py](setup.py)
 ```bash
-cd nodies_monitoring/server && python3 setup.py
+python3 setup.py
 ```
 
-2. Boot up all server services
+2. Change directory into the [server](./server) subfolder, and boot up all server services
 ```bash
-docker compose up -d
+cd nodies_monitoring/server && docker compose up -d
 ```
 ----
+
 ### Client setup
 
 #### Blockchain exporter setup
 
 1. Include your blockchain accessible endpoints inside a `chains.json` (./templates/chains.json) file. An example file is provided for you in `chains.example.json`.
-
-2. Change directory into the [clients](./clients) subfolder, and run [setup.py](./clients/setup.py)
 
 #### Log aggregation setup (Promtail)
 1. Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) are formatted with the following format:
@@ -154,14 +153,13 @@ docker compose up -d
 
 ---
 
-### Spinning up the client stack
+#### Spinning up the client stack
 ```bash
-cd nodies_monitoring/clients && python3 setup.py
-docker compose up -d
+cd nodies_monitoring/clients && docker compose up -d
 ```
 
-## Run individual clients
- [setup.py](./clients/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
+### Run individual clients
+ [setup.py](setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
 
 `python3 setup.py --clients blockchain_exporter, cadvisor, node_exporter`
 

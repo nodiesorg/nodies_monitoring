@@ -4,7 +4,6 @@
 *.pyc
 
 chains.json
-.env
 
 /server/.data/
 /server/docker-compose.yml
