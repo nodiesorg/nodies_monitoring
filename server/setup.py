@@ -10,16 +10,21 @@ def get_template(template_path):
         template_dict = yaml.safe_load(f)
     return template_dict
 
+
 def get_settings():
     return get_template("./settings.yml")
+
 
 def generate_config(completed_template, output_path):
     with open(output_path, "w") as f:
         yaml.dump(completed_template, f)
 
+
 settings = get_settings()
 
-#server update methods
+# server update methods
+
+
 def update_prometheus_config():
     template_dict = get_template(Path('../templates/prometheus.yml'))
     for job_dict in template_dict["scrape_configs"]:
@@ -33,7 +38,8 @@ def update_prometheus_config():
             targets = settings["server"]["exporter_endpoints"]["cadvisor"]
             job_dict["static_configs"][0]["targets"] = targets
         else:
-            print(f"Unexpected prometheus job found in config: {job_dict['job_name']}")
+            print(
+                f"Unexpected prometheus job found in config: {job_dict['job_name']}")
     generate_config(template_dict, Path('prometheus/prometheus.yml'))
 
 
@@ -66,14 +72,16 @@ def update_server_docker_compose():
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
         port_str = settings["server"]["ports"][service]
-        template_dict["services"][service]['ports'] = [f"{port_str}:{port_str}"]
+        template_dict["services"][service]['ports'] = [
+            f"{port_str}:{port_str}"]
     generate_config(template_dict, Path("docker-compose.yml"))
 
 
 def update_grafana_folder_permissions():
     grafana_path = Path('./grafana/')
     os.chown(grafana_path, 472, -1)
-    os.chmod(grafana_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    os.chmod(grafana_path, stat.S_IRWXU |
+             stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
 # client update methods
@@ -84,33 +92,37 @@ def update_promtail():
     loki_port = settings['clients']['ports']['loki']
     full_url = f"{domain}:{loki_port}/loki/api/v1/push"
     promtail_port = settings["clients"]["ports"]["promtail"]
-    
+
     template_dict["clients"][0]["url"] = full_url
     template_dict["server"]["http_listen_port"] = int(promtail_port)
-    generate_config(template_dict, Path('../clients/promtail/promtail-config.yml'))
+    generate_config(template_dict, Path(
+        '../clients/promtail/promtail-config.yml'))
 
 
 def update_bcexporter():
     blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
     template_dict = get_template(Path('../templates/clients/config.yml'))
     template_dict["exporter_port"] = blockchain_exporter_port
-    generate_config(template_dict, Path('../clients/bcexporter/config/config.yml'))
+    generate_config(template_dict, Path(
+        '../clients/bcexporter/config/config.yml'))
 
 
-
-
-def main():
-    #clients
+def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--clients', nargs='+', default=['blockchain_exporter', 'promtail', 'cadvisor', 'node_exporter']
-                        , help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
+    parser.add_argument('-c', '--clients', nargs='+', default=['blockchain_exporter', 'promtail', 'cadvisor',
+                        'node_exporter'], help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
 
     args = parser.parse_args()
+    return args
+
+
+def update_clients_docker_compose():
+    args = get_args()
     clients = args.clients
     valid_args = ["blockchain_exporter",
                   "promtail", "cadvisor", "node_exporter"]
     removed_list = valid_args
-    #generate the client docker compose              
+    # generate the client docker compose
     for client in clients:
         if client not in valid_args:
             print(f"not a valid arg {client}")
@@ -119,16 +131,23 @@ def main():
                 Path('../templates/clients/docker-compose.yml'))
             for service in valid_args:
                 port = settings["clients"]["ports"][service]
-                template_dict["services"][service]["ports"] = [f"{port}:{port}"]
+                template_dict["services"][service]["ports"] = [
+                    f"{port}:{port}"]
             if client in valid_args:
                 removed_list.remove(client)
             for service in removed_list:
                 del template_dict["services"][service]
-            generate_config(template_dict, Path('../clients/docker-compose.yml'))
+            generate_config(template_dict, Path(
+                '../clients/docker-compose.yml'))
+
+
+def main():
+    # client
+    update_clients_docker_compose()
     update_bcexporter()
     update_promtail()
 
-    #server
+    # server
     update_prometheus_config()
     update_loki()
     update_datasource("loki")
