@@ -1,7 +1,6 @@
 import os
 import stat
 import argparse
-import ast
 from pathlib import Path
 import yaml
 
@@ -26,13 +25,13 @@ def update_prometheus_config():
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
             targets = settings["server"]["exporter_endpoints"]["node"]
-            job_dict["static_configs"][0]["targets"] = ast.literal_eval(targets)
+            job_dict["static_configs"][0]["targets"] = targets
         elif job_dict["job_name"] == "blockchain":
             targets = settings["server"]["exporter_endpoints"]["blockchain"]
-            job_dict["static_configs"][0]["targets"] = ast.literal_eval(targets)
+            job_dict["static_configs"][0]["targets"] = targets
         elif job_dict["job_name"] == "cadvisor":
             targets = settings["server"]["exporter_endpoints"]["cadvisor"]
-            job_dict["static_configs"][0]["targets"] = ast.literal_eval(targets)
+            job_dict["static_configs"][0]["targets"] = targets
         else:
             print(f"Unexpected prometheus job found in config: {job_dict['job_name']}")
     generate_config(template_dict, Path('prometheus/prometheus.yml'))
