@@ -1,6 +1,6 @@
 clients:
   ports:
-    node_exporter: 9200
+    node_exporter: 9100
     blockchain_exporter: 9877
     cadvisor: 8080
     promtail: 9080

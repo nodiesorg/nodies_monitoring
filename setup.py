@@ -12,7 +12,7 @@ def get_template(template_path):
 
 
 def get_settings():
-    return get_template("./settings.yml")
+    return get_template("server/settings.yml")
 
 
 def generate_config(completed_template, output_path):
@@ -26,7 +26,7 @@ settings = get_settings()
 
 
 def update_prometheus_config():
-    template_dict = get_template(Path('../templates/prometheus.yml'))
+    template_dict = get_template(Path('templates/prometheus.yml'))
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
             targets = settings["server"]["exporter_endpoints"]["node"]
@@ -40,45 +40,45 @@ def update_prometheus_config():
         else:
             print(
                 f"Unexpected prometheus job found in config: {job_dict['job_name']}")
-    generate_config(template_dict, Path('prometheus/prometheus.yml'))
+    generate_config(template_dict, Path('server/prometheus/prometheus.yml'))
 
 
 def update_loki():
-    template_dict = get_template(Path('../templates/loki-config.yml'))
+    template_dict = get_template(Path('templates/loki-config.yml'))
     template_dict["server"]["http_listen_port"] = settings["server"]["ports"]["loki"]
-    generate_config(template_dict, Path('loki/loki-config.yml'))
+    generate_config(template_dict, Path('server/loki/loki-config.yml'))
 
 
 def update_datasource(datasource):
     template_dict = get_template(
-        Path(f'../templates/datasources/{datasource}.yaml'))
+        Path(f'templates/datasources/{datasource}.yaml'))
     endpoint = settings["server"]["endpoint"]
     port = settings["server"]["ports"][datasource]
     template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
     generate_config(template_dict, Path(
-        f"grafana_provisioning/datasources/{datasource}.yaml"))
+        f"server/grafana_provisioning/datasources/{datasource}.yaml"))
 
 
 def update_alerting_contactpoint():
     template_dict = get_template(
-        Path('../templates/alerting/contactpoint.yaml'))
+        Path('templates/alerting/contactpoint.yaml'))
     template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = settings["server"]["slack"]["webhook"]
     generate_config(template_dict, Path(
-        'grafana_provisioning/alerting/contactpoint.yaml'))
+        'server/grafana_provisioning/alerting/contactpoint.yaml'))
 
 
 def update_server_docker_compose():
-    template_dict = get_template(Path('../templates/docker-compose.yml'))
+    template_dict = get_template(Path('templates/docker-compose.yml'))
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
         port_str = settings["server"]["ports"][service]
         template_dict["services"][service]['ports'] = [
             f"{port_str}:{port_str}"]
-    generate_config(template_dict, Path("docker-compose.yml"))
+    generate_config(template_dict, Path("server/docker-compose.yml"))
 
 
 def update_grafana_folder_permissions():
-    grafana_path = Path('./grafana/')
+    grafana_path = Path('server/grafana/')
     os.chown(grafana_path, 472, -1)
     os.chmod(grafana_path, stat.S_IRWXU |
              stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
@@ -87,7 +87,7 @@ def update_grafana_folder_permissions():
 # client update methods
 def update_promtail():
     template_dict = get_template(
-        Path("../templates/clients/promtail-config.yml"))
+        Path("templates/clients/promtail-config.yml"))
     domain = f"http://{settings['server']['endpoint']}"
     loki_port = settings['clients']['ports']['loki']
     full_url = f"{domain}:{loki_port}/loki/api/v1/push"
@@ -96,15 +96,15 @@ def update_promtail():
     template_dict["clients"][0]["url"] = full_url
     template_dict["server"]["http_listen_port"] = int(promtail_port)
     generate_config(template_dict, Path(
-        '../clients/promtail/promtail-config.yml'))
+        'clients/promtail/promtail-config.yml'))
 
 
 def update_bcexporter():
     blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
-    template_dict = get_template(Path('../templates/clients/config.yml'))
+    template_dict = get_template(Path('templates/clients/config.yml'))
     template_dict["exporter_port"] = blockchain_exporter_port
     generate_config(template_dict, Path(
-        '../clients/bcexporter/config/config.yml'))
+        'clients/bcexporter/config/config.yml'))
 
 
 def get_args():
@@ -128,7 +128,7 @@ def update_clients_docker_compose():
             print(f"not a valid arg {client}")
         else:
             template_dict = get_template(
-                Path('../templates/clients/docker-compose.yml'))
+                Path('templates/clients/docker-compose.yml'))
             for service in valid_args:
                 port = settings["clients"]["ports"][service]
                 template_dict["services"][service]["ports"] = [
@@ -138,7 +138,7 @@ def update_clients_docker_compose():
             for service in removed_list:
                 del template_dict["services"][service]
             generate_config(template_dict, Path(
-                '../clients/docker-compose.yml'))
+                'clients/docker-compose.yml'))
 
 
 def main():

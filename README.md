@@ -14,7 +14,7 @@ TBD instructions on how to contribute to this project.
 - [Installation](#installation)
     - [Dependencies](#dependencies)
 - [Getting started](#getting-started)
-    - [Environment Vars Setup](#environment-vars-setup-required)
+    - [Settings](#settings-required)
     - [Server Setup](#server-setup)
     - [Client Setup](#client-setup)
     - [Run Individual Clients](#run-individual-clients)
@@ -108,16 +108,17 @@ pip3 install -r requirements.txt
 
 On your monitoring server:
 
-1. Change directory into the [server](./server) subfolder, and run [setup.py](./server/setup.py)
+1. Run [setup.py](setup.py)
 ```bash
-cd nodies_monitoring/server && python3 setup.py
+python3 setup.py
 ```
 
-2. Boot up all server services
+2. Change directory into the [server](./server) subfolder, and boot up all server services
 ```bash
-docker compose up -d
+cd nodies_monitoring/server && docker compose up -d
 ```
 ----
+
 ### Client setup
 
 #### Blockchain exporter setup
@@ -152,13 +153,13 @@ docker compose up -d
 
 ---
 
-### Spinning up the client stack
+#### Spinning up the client stack
 ```bash
 cd nodies_monitoring/clients && docker compose up -d
 ```
 
-## Run individual clients
- [setup.py](./server/setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
+### Run individual clients
+ [setup.py](setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
 
 `python3 setup.py --clients blockchain_exporter, cadvisor, node_exporter`
 
