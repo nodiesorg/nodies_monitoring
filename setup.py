@@ -79,23 +79,24 @@ def update_server_docker_compose():
 
 def update_grafana_folder_permissions():
     grafana_path = Path('server/grafana/')
+    user = 472
     perms = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 
-    def recursive_perms(path, permissions):
+    def recursive_perms(path, user_id, permissions):
         # update root directory
-        os.chown(path, 472, -1)
+        os.chown(path, user_id, -1)
         os.chmod(path, permissions)
         for root, dirs, files in os.walk(path):
             # update sub directories
             for dir in dirs:
-                os.chown(os.path.join(root, dir), 472, -1)
+                os.chown(os.path.join(root, dir), user_id, -1)
                 os.chmod(os.path.join(root, dir), permissions)
             # update sub files
             for file in files:
-                os.chown(os.path.join(root, file), 472, -1)
+                os.chown(os.path.join(root, file), user_id, -1)
                 os.chmod(os.path.join(root, file), permissions)
 
-    recursive_perms(grafana_path, perms)
+    recursive_perms(grafana_path, user, perms)
 
 # client update methods
 def update_promtail():
