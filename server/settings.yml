@@ -1,0 +1,23 @@
+clients:
+  endpoint: 111.222.333.002
+  ports:
+    node_exporter: 9100
+    blockchain_exporter: 9877
+    cadvisor: 8080
+    promtail: 9080
+    loki: 3100
+
+server:
+  endpoint: 111.222.333.001
+  ports:
+    loki: 3100
+    prometheus: 9090
+    grafana: 3000
+    minio: 9000
+    promtail: 9080
+  slack:
+    webhook: https://hooks.slack.com/services/your_slack_webhook_string
+  exporter_endpoints:
+    cadvisor: ["111.222.333.002:8080"]
+    blockchain: ["111.222.333.002:9877"]
+    node: ["111.222.333.002:9100"]

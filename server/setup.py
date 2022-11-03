@@ -1,28 +1,8 @@
 import os
 import stat
+import argparse
 from pathlib import Path
 import yaml
-from dotenv import load_dotenv
-
-'''
-This method parses several environment variables and returns the values in a dictionary.
-'''
-
-
-def _get_env_vars():
-    env_vars = [
-        "NODE_EXPORTER_PORT", "BLOCKCHAIN_EXPORTER_PORT", "CADVISOR_EXPORTER_PORT"
-        , "LOKI_PORT", "PROMETHEUS_PORT", "GRAFANA_PORT", "MINIO_PORT", "ALERTMANAGER_PORT"
-        , "PROMTAIL_PORT", "SLACK_WEBHOOK", "SERVER_ENDPOINT", "CLIENT_ENDPOINT"
-    ]
-    env_var_dict = {}
-    for env_var in env_vars:
-        env_var_dict[env_var] = os.getenv(env_var)
-    return env_var_dict
-
-
-load_dotenv(dotenv_path=Path('../.env'))
-env_vars = _get_env_vars()
 
 
 def get_template(template_path):
@@ -30,23 +10,27 @@ def get_template(template_path):
         template_dict = yaml.safe_load(f)
     return template_dict
 
+def get_settings():
+    return get_template("./settings.yml")
 
 def generate_config(completed_template, output_path):
     with open(output_path, "w") as f:
         yaml.dump(completed_template, f)
 
+settings = get_settings()
 
+#server update methods
 def update_prometheus_config():
     template_dict = get_template(Path('../templates/prometheus.yml'))
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
-            target = f"{env_vars['CLIENT_ENDPOINT']}:{env_vars['NODE_EXPORTER_PORT']}"
+            target = settings["server"]["exporter_endpoints"]["node"]
             job_dict["static_configs"][0]["targets"] = [target]
         elif job_dict["job_name"] == "blockchain":
-            target = f"{env_vars['CLIENT_ENDPOINT']}:{env_vars['BLOCKCHAIN_EXPORTER_PORT']}"
+            target = settings["server"]["exporter_endpoints"]["blockchain"]
             job_dict["static_configs"][0]["targets"] = [target]
         elif job_dict["job_name"] == "cadvisor":
-            target = f"{env_vars['CLIENT_ENDPOINT']}:{env_vars['CADVISOR_EXPORTER_PORT']}"
+            target = settings["server"]["exporter_endpoints"]["cadvisor"]
             job_dict["static_configs"][0]["targets"] = [target]
         else:
             print(f"Unexpected prometheus job found in config: {job_dict['job_name']}")
@@ -55,19 +39,18 @@ def update_prometheus_config():
 
 def update_loki():
     template_dict = get_template(Path('../templates/loki-config.yml'))
-    template_dict["server"]["http_listen_port"] = int(env_vars["LOKI_PORT"])
+    template_dict["server"]["http_listen_port"] = settings["server"]["ports"]["loki"]
     generate_config(template_dict, Path('loki/loki-config.yml'))
 
 
 def update_datasource(datasource):
-    # if datasource.upper() != "LOKI" and datasource.upper() != "PROMETHEUS":
-    if datasource.upper() not in ["LOKI", "PROMETHEUS", "ALERTMANAGER"]:
+    if datasource.upper() not in ["LOKI", "PROMETHEUS"]:
         print("invalid params passed for update_datasource")
     else:
         template_dict = get_template(
             Path(f'../templates/datasources/{datasource}.yaml'))
-        endpoint = env_vars["SERVER_ENDPOINT"]
-        port = env_vars[f"{datasource.upper()}_PORT"]
+        endpoint = settings["server"]["endpoint"]
+        port = settings["server"]["ports"][datasource]
         template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
         generate_config(template_dict, Path(
             f"grafana_provisioning/datasources/{datasource}.yaml"))
@@ -76,7 +59,7 @@ def update_datasource(datasource):
 def update_alerting_contactpoint():
     template_dict = get_template(
         Path('../templates/alerting/contactpoint.yaml'))
-    template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = env_vars["SLACK_WEBHOOK"]
+    template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = settings["server"]["slack"]["webhook"]
     generate_config(template_dict, Path(
         'grafana_provisioning/alerting/contactpoint.yaml'))
 
@@ -85,7 +68,7 @@ def update_root_docker_compose():
     template_dict = get_template(Path('../templates/docker-compose.yml'))
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
-        port_str = env_vars[f"{service.upper()}_PORT"]
+        port_str = settings["server"]["ports"][service]
         template_dict["services"][service]['ports'] = [f"{port_str}:{port_str}"]
     generate_config(template_dict, Path("docker-compose.yml"))
 
@@ -96,7 +79,54 @@ def update_grafana_folder_permissions():
     os.chmod(grafana_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
+# client update methods
+def update_promtail():
+    template_dict = get_template(
+        Path("../templates/clients/promtail-config.yml"))
+    domain = f"http://{settings['server']['endpoint']}"
+    loki_port = settings['clients']['ports']['loki']
+    full_url = f"{domain}:{loki_port}/loki/api/v1/push"
+    promtail_port = settings["clients"]["ports"]["promtail"]
+    
+    template_dict["clients"][0]["url"] = full_url
+    template_dict["server"]["http_listen_port"] = int(promtail_port)
+    generate_config(template_dict, Path('../clients/promtail/promtail-config.yml'))
+
+
+def update_bcexporter():
+    blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
+    template_dict = get_template(Path('../templates/clients/config.yml'))
+    template_dict["exporter_port"] = blockchain_exporter_port
+    generate_config(template_dict, Path('../clients/bcexporter/config/config.yml'))
+
+
 def main():
+    #clients
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--clients', nargs='+', default=['blockchain_exporter', 'promtail', 'cadvisor', 'node_exporter']
+                        , help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
+
+    args = parser.parse_args()
+    clients = args.clients
+    valid_args = ["blockchain_exporter",
+                  "promtail", "cadvisor", "node_exporter"]
+
+    #generate the client docker compose              
+    for client in clients:
+        if client not in valid_args:
+            print(f"not a valid arg {client}")
+        else:
+            if client in valid_args:
+                valid_args.remove(client)
+            template_dict = get_template(
+                Path('../templates/clients/docker-compose.yml'))
+            for service in valid_args:
+                del template_dict["services"][service]
+            generate_config(template_dict, Path('../clients/docker-compose.yml'))
+    update_bcexporter()
+    update_promtail()
+
+    #server
     update_prometheus_config()
     update_loki()
     update_datasource("loki")
