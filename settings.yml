@@ -16,7 +16,7 @@ server:
     promtail: 9080
   webhooks:
     slack:
-      enabled: True
+      enabled: False
       url: https://hooks.slack.com/services/your_slack_webhook_string
     discord:
       enabled: False
