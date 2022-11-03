@@ -12,7 +12,7 @@ def get_template(template_path):
 
 
 def get_settings():
-    return get_template("server/settings.yml")
+    return get_template("settings.yml")
 
 
 def generate_config(completed_template, output_path):

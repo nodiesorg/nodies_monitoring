@@ -97,7 +97,7 @@ pip3 install -r requirements.txt
 
 **NOTE:** This step is required on both the server and the client stack. When setting up this stack, you should follow the principles of least privilege when allowing users to access your exposed ports by setting up network or host based firewalls.
 
-1. Edit the [settings](./server/settings.yml)
+1. Edit the [settings](settings.yml)
 2. Update `server.endpoint` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
 3. Update `clients.endpoint` with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 4. Update `server.slack.webhook` with the webhook of the slack channel to send grafana-managed alerts to.
