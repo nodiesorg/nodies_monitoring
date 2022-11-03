@@ -62,17 +62,3 @@ services:
     restart: unless-stopped
     networks:
       logging:
-
-  alertmanager:
-    container_name: alertmanager
-    image: prom/alertmanager:v0.24.0
-    ports:
-      - "9093:9093"
-    volumes:
-      - ./alertmanager/:/etc/alertmanager/
-    restart: always
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
-    networks:
-      logging:
