@@ -1,5 +1,4 @@
 import os
-import stat
 import argparse
 from pathlib import Path
 import yaml
@@ -62,7 +61,15 @@ def update_datasource(datasource):
 def update_alerting_contactpoint():
     template_dict = get_template(
         Path('templates/alerting/contactpoint.yaml'))
-    template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = settings["server"]["slack"]["webhook"]
+    enabled_recievers = []
+    for key, value in settings["server"]["webhooks"].items():
+        if value["enabled"] and key == 'slack':
+            template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = value["url"]
+            enabled_recievers.append(template_dict["contactPoints"][0]["receivers"][0])
+        if value["enabled"] and key == 'discord':
+            template_dict["contactPoints"][0]["receivers"][1]["settings"]["url"] = value["url"]
+            enabled_recievers.append(template_dict["contactPoints"][0]["receivers"][1])
+    template_dict["contactPoints"][0]["receivers"] = enabled_recievers
     generate_config(template_dict, Path(
         'server/grafana_provisioning/alerting/contactpoint.yaml'))
 
