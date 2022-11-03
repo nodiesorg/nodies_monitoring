@@ -25,13 +25,13 @@ def update_prometheus_config():
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
             target = settings["server"]["exporter_endpoints"]["node"]
-            job_dict["static_configs"][0]["targets"] = [target]
+            job_dict["static_configs"][0]["targets"] = target
         elif job_dict["job_name"] == "blockchain":
             target = settings["server"]["exporter_endpoints"]["blockchain"]
-            job_dict["static_configs"][0]["targets"] = [target]
+            job_dict["static_configs"][0]["targets"] = target
         elif job_dict["job_name"] == "cadvisor":
             target = settings["server"]["exporter_endpoints"]["cadvisor"]
-            job_dict["static_configs"][0]["targets"] = [target]
+            job_dict["static_configs"][0]["targets"] = target
         else:
             print(f"Unexpected prometheus job found in config: {job_dict['job_name']}")
     generate_config(template_dict, Path('prometheus/prometheus.yml'))
