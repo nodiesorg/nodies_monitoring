@@ -44,16 +44,13 @@ def update_loki():
 
 
 def update_datasource(datasource):
-    if datasource.upper() not in ["LOKI", "PROMETHEUS"]:
-        print("invalid params passed for update_datasource")
-    else:
-        template_dict = get_template(
-            Path(f'../templates/datasources/{datasource}.yaml'))
-        endpoint = settings["server"]["endpoint"]
-        port = settings["server"]["ports"][datasource]
-        template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
-        generate_config(template_dict, Path(
-            f"grafana_provisioning/datasources/{datasource}.yaml"))
+    template_dict = get_template(
+        Path(f'../templates/datasources/{datasource}.yaml'))
+    endpoint = settings["server"]["endpoint"]
+    port = settings["server"]["ports"][datasource]
+    template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
+    generate_config(template_dict, Path(
+        f"grafana_provisioning/datasources/{datasource}.yaml"))
 
 
 def update_alerting_contactpoint():
@@ -131,7 +128,6 @@ def main():
     update_loki()
     update_datasource("loki")
     update_datasource("prometheus")
-    update_datasource("alertmanager")
     update_alerting_contactpoint()
     update_root_docker_compose()
     update_grafana_folder_permissions()
