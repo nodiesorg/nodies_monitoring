@@ -61,7 +61,7 @@ def update_alerting_contactpoint():
         'grafana_provisioning/alerting/contactpoint.yaml'))
 
 
-def update_root_docker_compose():
+def update_server_docker_compose():
     template_dict = get_template(Path('../templates/docker-compose.yml'))
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
@@ -97,6 +97,8 @@ def update_bcexporter():
     generate_config(template_dict, Path('../clients/bcexporter/config/config.yml'))
 
 
+
+
 def main():
     #clients
     parser = argparse.ArgumentParser()
@@ -107,17 +109,20 @@ def main():
     clients = args.clients
     valid_args = ["blockchain_exporter",
                   "promtail", "cadvisor", "node_exporter"]
-
+    removed_list = valid_args
     #generate the client docker compose              
     for client in clients:
         if client not in valid_args:
             print(f"not a valid arg {client}")
         else:
-            if client in valid_args:
-                valid_args.remove(client)
             template_dict = get_template(
                 Path('../templates/clients/docker-compose.yml'))
             for service in valid_args:
+                port = settings["clients"]["ports"][service]
+                template_dict["services"][service]["ports"] = [f"{port}:{port}"]
+            if client in valid_args:
+                removed_list.remove(client)
+            for service in removed_list:
                 del template_dict["services"][service]
             generate_config(template_dict, Path('../clients/docker-compose.yml'))
     update_bcexporter()
@@ -129,7 +134,7 @@ def main():
     update_datasource("loki")
     update_datasource("prometheus")
     update_alerting_contactpoint()
-    update_root_docker_compose()
+    update_server_docker_compose()
     update_grafana_folder_permissions()
 
 
