@@ -18,3 +18,4 @@ chains.json
 /clients/log/*.log
 
 notes.md
+dev.gitignore
