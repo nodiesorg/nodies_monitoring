@@ -77,7 +77,7 @@ def update_server_docker_compose():
     generate_config(template_dict, Path("server/docker-compose.yml"))
 
 
-def recursive_update_permissions(path, user_id, perms):
+def update_permissions_recursively(path, user_id, perms):
     # update root directory
     os.chown(path, user_id, -1)
     os.chmod(path, perms)
@@ -162,7 +162,7 @@ def main():
     update_datasource("prometheus")
     update_alerting_contactpoint()
     update_server_docker_compose()
-    recursive_update_permissions(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    update_permissions_recursively(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
 if __name__ == "__main__":

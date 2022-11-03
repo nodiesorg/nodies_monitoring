@@ -7,7 +7,7 @@ clients:
     loki: 3100
 
 server:
-  endpoint: 147.182.131.254
+  endpoint: 111.222.333.001
   ports:
     loki: 3100
     prometheus: 9090
@@ -17,6 +17,6 @@ server:
   slack:
     webhook: https://hooks.slack.com/services/your_slack_webhook_string
   exporter_endpoints:
-    cadvisor: ["147.182.173.249:8080"]
-    blockchain: ["147.182.173.249:9877"]
-    node: ["147.182.173.249:9100"]
+    cadvisor: ["111.222.333.002:8080"]
+    blockchain: ["111.222.333.002:9877"]
+    node: ["111.222.333.002:9100"]
