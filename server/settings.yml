@@ -1,7 +1,6 @@
 clients:
-  endpoint: 111.222.333.002
   ports:
-    node_exporter: 9100
+    node_exporter: 9200
     blockchain_exporter: 9877
     cadvisor: 8080
     promtail: 9080
