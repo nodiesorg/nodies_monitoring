@@ -99,8 +99,8 @@ pip3 install -r requirements.txt
 
 1. Edit the [settings](settings.yml)
 2. Update `server.endpoint` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
-3. Update `clients.endpoint` with the ip address of the host that will run any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
-4. Update `server.slack.webhook` with the webhook of the slack channel to send grafana-managed alerts to.
+3. Update `server.exporter_endpoint` with the endpoints any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
+4. Update `server.webhooks` with the webhooks of your alert recievers to send grafana-managed alerts to.
 
 ---
 

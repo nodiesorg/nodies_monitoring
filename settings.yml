@@ -14,8 +14,13 @@ server:
     grafana: 3000
     minio: 9000
     promtail: 9080
-  slack:
-    webhook: https://hooks.slack.com/services/your_slack_webhook_string
+  webhooks:
+    slack:
+      enabled: True
+      url: https://hooks.slack.com/services/your_slack_webhook_string
+    discord:
+      enabled: False
+      url: https://discord.com/api/webhooks/your_uuid/your_other_uuid
   exporter_endpoints:
     cadvisor: ["111.222.333.002:8080"]
     blockchain: ["111.222.333.002:9877"]

@@ -13,7 +13,7 @@ contactPoints:
   # <int> organization ID, default = 1
   - orgId: 1
     # <string, required> name of the contact point
-    name: grafana-default-slack
+    name: grafana-default
     receivers:
       # <string, required> unique identifier for the receiver
       - uid: grafana-default-slack
@@ -24,3 +24,9 @@ contactPoints:
           url: http://test:9000
           text: "{{ template \"slack\" . }}"
           title: "{{ if eq .Status \"firing\" }}:fire:{{ else }}:white_check_mark:{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}"
+      - uid: grafana-default-discord
+        type: discord
+        settings:
+          url: https://discord.com/api/webhooks/your_uuid/your_other_uuid
+          use_discord_name: Grafana
+          message: "{{ template \"slack\" . }}"
