@@ -149,8 +149,7 @@ def update_clients_docker_compose():
             template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
             if service_name == 'promtail':
                 promtail_log_root_path = settings["clients"]["promtail_log_root_path"]
-                promtail_volumes_list = template_dict["services"][service_name]["volumes"]
-                for idx, promtail_volume in enumerate(promtail_volumes_list):
+                for idx, promtail_volume in enumerate(template_dict["services"][service_name]["volumes"]):
                     if promtail_volume.endswith('/var/log'):
                         template_dict["services"][service_name]["volumes"][idx] = f"{promtail_log_root_path}:/var/log"
         else:
