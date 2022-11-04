@@ -1,6 +1,7 @@
 import os
 import argparse
 from pathlib import Path
+import stat
 import yaml
 
 
@@ -20,6 +21,7 @@ def generate_config(completed_template, output_path):
 
 
 settings = get_settings()
+
 
 # server update methods
 
@@ -61,15 +63,17 @@ def update_datasource(datasource):
 def update_alerting_contactpoint():
     template_dict = get_template(
         Path('templates/alerting/contactpoint.yaml'))
-    enabled_recievers = []
-    for key, value in settings["server"]["webhooks"].items():
-        if value["enabled"] and key == 'slack':
-            template_dict["contactPoints"][0]["receivers"][0]["settings"]["url"] = value["url"]
-            enabled_recievers.append(template_dict["contactPoints"][0]["receivers"][0])
-        if value["enabled"] and key == 'discord':
-            template_dict["contactPoints"][0]["receivers"][1]["settings"]["url"] = value["url"]
-            enabled_recievers.append(template_dict["contactPoints"][0]["receivers"][1])
-    template_dict["contactPoints"][0]["receivers"] = enabled_recievers
+    valid_args = ["slack", "discord"]
+    for webhook_name, webhook_dict in settings["server"]["webhooks"].items():
+        if webhook_name not in valid_args:
+            print(f"not a valid arg {webhook_name}")
+        else:
+            for idx, receiver_dict in enumerate(template_dict["contactPoints"][0]["receivers"]):
+                if receiver_dict["type"] == webhook_name:
+                    if webhook_dict["enabled"]:
+                        template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = webhook_dict["url"]
+                    else:
+                        template_dict["contactPoints"][0]["receivers"].pop(idx)
     generate_config(template_dict, Path(
         'server/grafana_provisioning/alerting/contactpoint.yaml'))
 
@@ -125,7 +129,8 @@ def update_bcexporter():
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--clients', nargs='+', default=['blockchain_exporter', 'promtail', 'cadvisor',
-                        'node_exporter'], help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
+                                                               'node_exporter'],
+                        help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
 
     args = parser.parse_args()
     return args
