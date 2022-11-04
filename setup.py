@@ -122,9 +122,7 @@ def update_promtail():
 
 
 def update_bcexporter():
-    blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
     template_dict = get_template('templates/clients/config.yml')
-    template_dict["exporter_port"] = blockchain_exporter_port
     generate_config(template_dict, 'clients/bcexporter/config/config.yml')
 
 
