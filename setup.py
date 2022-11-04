@@ -5,8 +5,6 @@ from pathlib import Path
 
 import yaml
 
-from pprint import pprint
-
 def get_template(template_path):
     with open(template_path, 'r') as f:
         template_dict = yaml.safe_load(f)
@@ -76,8 +74,7 @@ def update_alerting_contactpoint():
                         template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = webhook_dict["url"]
                     else:
                         template_dict["contactPoints"][0]["receivers"].pop(idx)
-    generate_config(template_dict, Path(
-        'server/grafana_provisioning/alerting/contactpoint.yaml'))
+    generate_config(template_dict, Path('server/grafana_provisioning/alerting/contactpoint.yaml'))
 
 
 def update_server_docker_compose():
@@ -135,44 +132,30 @@ def get_args():
                                                                'node_exporter'],
                         help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
     args = parser.parse_args()
-    for flag, clients in args.__dict__.items():
-        if flag == 'clients':
-            for client in clients:
-                if client not in valid_args:
-                    print(f"not a valid arg {client}")
+    for client in args.clients:
+        if client not in valid_args:
+            print(f"not a valid arg {client}")
+            args.clients.remove(client)
     return args
 
 
 def update_clients_docker_compose():
     template_dict = get_template(Path('templates/clients/docker-compose.yml'))
-    args = get_args()
-    arg_clients = args.clients
-
-    # removed_list = valid_args
-    # generate the client docker compose
-    for client in arg_clients:
-        for service in valid_args:
-            port_str = settings["clients"]["ports"][service]
-            default_port_str = (template_dict["services"][service]['ports'][0]).split(':')[0]
-            template_dict["services"][service]["ports"] = [f"{port_str}:{default_port_str}"]
-        # if client == 'promtail':
-        #     promtail_log_root_path = settings["clients"]["promtail_log_root_path"]
-        #     # print('settings_path', promtail_log_root_path)
-        #     promtail_volumes_list = template_dict["services"][client]["volumes"]
-        #     # print('volumes_list', promtail_volumes_list)
-        #     for idx, promtail_volume in enumerate(promtail_volumes_list):
-        #         if promtail_volume.endswith('/var/log'):
-        #             # print('promtail_volume', promtail_volume)
-        #             template_dict["services"][client]["volumes"][idx] = f"{promtail_log_root_path}:/var/log"
-        #             # print('changed_volume', template_dict["services"][client]["volumes"][idx])
-        # if client in valid_args:
-        #     removed_list.remove(client)
-        #     print('removed_list', removed_list)
-        # for service in removed_list:
-        #     print('service in removed_list', service)
-        #     del template_dict["services"][service]
-    generate_config(template_dict, Path(
-        'clients/docker-compose.yml'))
+    arg_clients = get_args().clients
+    for service_name, service_dict in template_dict["services"].copy().items():
+        if service_name in arg_clients:
+            port_str = settings["clients"]["ports"][service_name]
+            default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
+            template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
+            if service_name == 'promtail':
+                promtail_log_root_path = settings["clients"]["promtail_log_root_path"]
+                promtail_volumes_list = template_dict["services"][service_name]["volumes"]
+                for idx, promtail_volume in enumerate(promtail_volumes_list):
+                    if promtail_volume.endswith('/var/log'):
+                        template_dict["services"][service_name]["volumes"][idx] = f"{promtail_log_root_path}:/var/log"
+        else:
+            del template_dict["services"][service_name]
+    generate_config(template_dict, Path('clients/docker-compose.yml'))
 
 
 def main():
@@ -188,7 +171,7 @@ def main():
     update_datasource("prometheus")
     update_alerting_contactpoint()
     update_server_docker_compose()
-    # update_permissions_recursively(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    update_permissions_recursively(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
 if __name__ == "__main__":
