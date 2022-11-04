@@ -66,7 +66,7 @@ def update_alerting_contactpoint():
     valid_args = ["slack", "discord"]
     for webhook_name, webhook_dict in settings["server"]["webhooks"].items():
         if webhook_name not in valid_args:
-            print(f"not a valid arg {webhook_name}")
+            print(f"not a supported contactpoint {webhook_name}")
         else:
             for idx, receiver_dict in enumerate(template_dict["contactPoints"][0]["receivers"]):
                 if receiver_dict["type"] == webhook_name:
@@ -74,8 +74,7 @@ def update_alerting_contactpoint():
                         template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = webhook_dict["url"]
                     else:
                         template_dict["contactPoints"][0]["receivers"].pop(idx)
-    generate_config(template_dict, Path(
-        'server/grafana_provisioning/alerting/contactpoint.yaml'))
+    generate_config(template_dict, Path('server/grafana_provisioning/alerting/contactpoint.yaml'))
 
 
 def update_server_docker_compose():
@@ -84,8 +83,7 @@ def update_server_docker_compose():
     for service in services:
         port_str = settings["server"]["ports"][service]
         default_port_str = (template_dict["services"][service]['ports'][0]).split(':')[0]
-        template_dict["services"][service]['ports'] = [
-            f"{port_str}:{default_port_str}"]
+        template_dict["services"][service]['ports'] = [f"{port_str}:{default_port_str}"]
     generate_config(template_dict, Path("server/docker-compose.yml"))
 
 
@@ -128,39 +126,35 @@ def update_bcexporter():
 
 
 def get_args():
+    valid_args = ["blockchain_exporter", "promtail", "cadvisor", "node_exporter"]
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--clients', nargs='+', default=['blockchain_exporter', 'promtail', 'cadvisor',
                                                                'node_exporter'],
                         help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
-
     args = parser.parse_args()
+    for client in args.clients:
+        if client not in valid_args:
+            print(f"not a valid arg {client}")
+            args.clients.remove(client)
     return args
 
 
 def update_clients_docker_compose():
-    args = get_args()
-    clients = args.clients
-    valid_args = ["blockchain_exporter",
-                  "promtail", "cadvisor", "node_exporter"]
-    removed_list = valid_args
-    # generate the client docker compose
-    for client in clients:
-        if client not in valid_args:
-            print(f"not a valid arg {client}")
+    template_dict = get_template(Path('templates/clients/docker-compose.yml'))
+    arg_clients = get_args().clients
+    for service_name, service_dict in template_dict["services"].copy().items():
+        if service_name in arg_clients:
+            port_str = settings["clients"]["ports"][service_name]
+            default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
+            template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
+            if service_name == 'promtail':
+                promtail_log_root_path = settings["clients"]["promtail_log_root_path"]
+                for idx, promtail_volume in enumerate(template_dict["services"][service_name]["volumes"]):
+                    if promtail_volume.endswith('/var/log'):
+                        template_dict["services"][service_name]["volumes"][idx] = f"{promtail_log_root_path}:/var/log"
         else:
-            template_dict = get_template(
-                Path('templates/clients/docker-compose.yml'))
-            for service in valid_args:
-                port_str = settings["clients"]["ports"][service]
-                default_port_str = (template_dict["services"][service]['ports'][0]).split(':')[0]
-                template_dict["services"][service]["ports"] = [
-                    f"{port_str}:{default_port_str}"]
-            if client in valid_args:
-                removed_list.remove(client)
-            for service in removed_list:
-                del template_dict["services"][service]
-            generate_config(template_dict, Path(
-                'clients/docker-compose.yml'))
+            del template_dict["services"][service_name]
+    generate_config(template_dict, Path('clients/docker-compose.yml'))
 
 
 def main():

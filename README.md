@@ -101,6 +101,7 @@ pip3 install -r requirements.txt
 2. Update `server.endpoint` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
 3. Update `server.exporter_endpoint` with the endpoints any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 4. Update `server.webhooks` with the webhooks of your alert recievers to send grafana-managed alerts to.
+5. Update `clients.promtail_log_root_path` with the root path of your nginx logs.
 
 ---
 
@@ -126,7 +127,7 @@ cd nodies_monitoring/server && docker compose up -d
 1. Include your blockchain accessible endpoints inside a `chains.json` (./templates/chains.json) file. An example file is provided for you in `chains.example.json`.
 
 #### Log aggregation setup (Promtail)
-1. Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) are formatted with the following format:
+Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) are formatted with the following format:
 ```
     log_format json_combined escape=json
     '{'
@@ -149,7 +150,6 @@ cd nodies_monitoring/server && docker compose up -d
         '"request_time":"$request_time"'
     '}';
 ```
-2. Logs are expected by default to be stored in [./clients/log/](./clients/log)
 
 ---
 

@@ -5,6 +5,7 @@ clients:
     cadvisor: 8080
     promtail: 9080
     loki: 3100
+  promtail_log_root_path: ./log
 
 server:
   endpoint: 111.222.333.001
