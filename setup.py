@@ -173,7 +173,7 @@ def main():
     update_datasource("prometheus")
     update_alerting_contactpoint()
     update_server_docker_compose()
-    # update_permissions_recursively('server/grafana/', 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    update_permissions_recursively('server/grafana/', 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
 if __name__ == "__main__":
