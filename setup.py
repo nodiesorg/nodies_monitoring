@@ -1,9 +1,9 @@
-import os
 import argparse
-from pathlib import Path
+import os
 import stat
-import yaml
+from pathlib import Path
 
+import yaml
 
 def get_template(template_path):
     with open(template_path, 'r') as f:
@@ -83,8 +83,9 @@ def update_server_docker_compose():
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
         port_str = settings["server"]["ports"][service]
+        default_port_str = template_dict["services"][service]['ports'][0][:4]
         template_dict["services"][service]['ports'] = [
-            f"{port_str}:{port_str}"]
+            f"{port_str}:{default_port_str}"]
     generate_config(template_dict, Path("server/docker-compose.yml"))
 
 
@@ -150,9 +151,10 @@ def update_clients_docker_compose():
             template_dict = get_template(
                 Path('templates/clients/docker-compose.yml'))
             for service in valid_args:
-                port = settings["clients"]["ports"][service]
+                port_str = settings["clients"]["ports"][service]
+                default_port_str = template_dict["services"][service]['ports'][0][:4]
                 template_dict["services"][service]["ports"] = [
-                    f"{port}:{port}"]
+                    f"{port_str}:{default_port_str}"]
             if client in valid_args:
                 removed_list.remove(client)
             for service in removed_list:
@@ -174,7 +176,7 @@ def main():
     update_datasource("prometheus")
     update_alerting_contactpoint()
     update_server_docker_compose()
-    update_permissions_recursively(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    # update_permissions_recursively(Path('server/grafana/'), 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
 if __name__ == "__main__":
