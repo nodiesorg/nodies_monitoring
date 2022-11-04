@@ -135,7 +135,7 @@ def get_args() -> argparse.Namespace:
                                                                'node_exporter'],
                         help='possible clients to run are blockchain_exporter, promtail, cadvisor, and node_exporter')
     args = parser.parse_args()
-    for client in args.clients:
+    for client in args.clients.copy():
         if client not in valid_args:
             print(f"not a valid arg {client}")
             args.clients.remove(client)
