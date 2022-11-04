@@ -5,6 +5,7 @@ from pathlib import Path
 
 import yaml
 
+
 def get_template(template_path):
     with open(template_path, 'r') as f:
         template_dict = yaml.safe_load(f)
@@ -51,18 +52,20 @@ def update_loki():
 
 
 def update_datasource(datasource):
-    template_dict = get_template(
-        Path(f'templates/datasources/{datasource}.yaml'))
+    template_dict = get_template(Path(f'templates/datasources/{datasource}.yaml'))
     endpoint = settings["server"]["endpoint"]
     port = settings["server"]["ports"][datasource]
     template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
-    generate_config(template_dict, Path(
-        f"server/grafana_provisioning/datasources/{datasource}.yaml"))
+    generate_config(template_dict, Path(f"server/grafana_provisioning/datasources/{datasource}.yaml"))
+
+
+def update_notification_policies():
+    template_dict = get_template(Path('templates/alerting/notificationpolicies.yaml'))
+    generate_config(template_dict, Path('server/grafana_provisioning/alerting/notificationpolicies.yaml'))
 
 
 def update_alerting_contactpoint():
-    template_dict = get_template(
-        Path('templates/alerting/contactpoint.yaml'))
+    template_dict = get_template(Path('templates/alerting/contactpoint.yaml'))
     valid_args = ["slack", "discord"]
     for webhook_name, webhook_dict in settings["server"]["webhooks"].items():
         if webhook_name not in valid_args:
@@ -72,6 +75,8 @@ def update_alerting_contactpoint():
                 if receiver_dict["type"] == webhook_name:
                     if webhook_dict["enabled"]:
                         template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = webhook_dict["url"]
+                        if not Path('server/grafana_provisioning/alerting/notificationpolicies.yaml').exists():
+                            update_notification_policies()
                     else:
                         template_dict["contactPoints"][0]["receivers"].pop(idx)
     generate_config(template_dict, Path('server/grafana_provisioning/alerting/contactpoint.yaml'))
@@ -104,8 +109,7 @@ def update_permissions_recursively(path, user_id, perms):
 
 # client update methods
 def update_promtail():
-    template_dict = get_template(
-        Path("templates/clients/promtail-config.yml"))
+    template_dict = get_template(Path("templates/clients/promtail-config.yml"))
     domain = f"http://{settings['server']['endpoint']}"
     loki_port = settings['clients']['ports']['loki']
     full_url = f"{domain}:{loki_port}/loki/api/v1/push"
@@ -113,16 +117,14 @@ def update_promtail():
 
     template_dict["clients"][0]["url"] = full_url
     template_dict["server"]["http_listen_port"] = int(promtail_port)
-    generate_config(template_dict, Path(
-        'clients/promtail/promtail-config.yml'))
+    generate_config(template_dict, Path('clients/promtail/promtail-config.yml'))
 
 
 def update_bcexporter():
     blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
     template_dict = get_template(Path('templates/clients/config.yml'))
     template_dict["exporter_port"] = blockchain_exporter_port
-    generate_config(template_dict, Path(
-        'clients/bcexporter/config/config.yml'))
+    generate_config(template_dict, Path('clients/bcexporter/config/config.yml'))
 
 
 def get_args():
