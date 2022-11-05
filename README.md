@@ -161,7 +161,7 @@ cd nodies_monitoring/clients && docker compose up -d
 ### Run individual clients
  [setup.py](setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
 
-`python3 setup.py --clients blockchain_exporter, cadvisor, node_exporter`
+`python3 setup.py --clients blockchain_exporter cadvisor node_exporter`
 
 ---
 
