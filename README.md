@@ -111,8 +111,9 @@ On your monitoring server:
 
 1. Run [setup.py](setup.py)
 ```bash
-python3 setup.py
+sudo python3 setup.py
 ```
+**NOTE:** Sudo is required here to set some folder permissions
 
 2. Change directory into the [server](./server) subfolder, and boot up all server services
 ```bash
@@ -122,12 +123,14 @@ cd nodies_monitoring/server && docker compose up -d
 
 ### Client setup
 
+On your exporter server:
+
 #### Blockchain exporter setup
 
 1. Include your blockchain accessible endpoints inside a `chains.json` (./templates/chains.json) file. An example file is provided for you in `chains.example.json`.
 
 #### Log aggregation setup (Promtail)
-Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) are formatted with the following format:
+2. Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) are formatted with the following format:
 ```
     log_format json_combined escape=json
     '{'
@@ -151,17 +154,22 @@ Ensure that your [access logs](https://docs.nginx.com/nginx/admin-guide/monitori
     '}';
 ```
 
----
-
-#### Spinning up the client stack
+3. Run [setup.py](setup.py)
 ```bash
-cd nodies_monitoring/clients && docker compose up -d
+sudo python3 setup.py
 ```
+**NOTE:** Sudo is required here to set some folder permissions
+
+4. Change directory into the [clients](./clients) subfolder, and boot up all client services
+```bash
+cd nodies_monitoring/server && docker compose up -d
+```
+----
 
 ### Run individual clients
  [setup.py](setup.py) has an optional CLI flag that allows control over which clients are ran on the exporter stack. For example, if you don't want to run log aggregation, then you can disable the log shipper `promtail`.
 
-`python3 setup.py --clients blockchain_exporter, cadvisor, node_exporter`
+`sudo python3 setup.py --clients blockchain_exporter, cadvisor, node_exporter`
 
 ---
 
