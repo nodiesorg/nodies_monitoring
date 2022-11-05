@@ -66,15 +66,18 @@ def update_notification_policies():
 
 def update_alerting_contactpoint():
     template_dict = get_template('templates/alerting/contactpoint.yaml')
-    valid_args = ["slack", "discord"]
-    for webhook_name, webhook_dict in settings["server"]["webhooks"].items():
-        if webhook_name not in valid_args:
-            print(f"not a supported contactpoint {webhook_name}")
+    valid_args = ["slack", "discord", "teams", "email"]
+    for alert_name, alert_dict in settings["server"]["alerts"].items():
+        if alert_name not in valid_args:
+            print(f"not a supported contactpoint {alert_name}")
         else:
             for idx, receiver_dict in enumerate(template_dict["contactPoints"][0]["receivers"]):
-                if receiver_dict["type"] == webhook_name:
-                    if webhook_dict["enabled"]:
-                        template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = webhook_dict["url"]
+                if receiver_dict["type"] == alert_name:
+                    if alert_dict["enabled"]:
+                        if alert_name == 'email':
+                            template_dict["contactPoints"][0]["receivers"][idx]["settings"]["addresses"] = ';'.join(alert_dict["addresses"])
+                        else:
+                            template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = alert_dict["url"]
                         if not Path('server/grafana_provisioning/alerting/notificationpolicies.yaml').exists():
                             update_notification_policies()
                     else:
