@@ -5,6 +5,7 @@ from web3.eth import AsyncEth
 from web3.middleware import async_geth_poa_middleware
 
 from connectors.Web3Connector import Web3Connector
+from data.ChainSyncStatus import ChainSyncStatus
 
 
 class EthConnector(Web3Connector):
@@ -29,11 +30,11 @@ class EthConnector(Web3Connector):
                 asyncio.ensure_future(self.get_latest_block())
             ]
             curr_height, latest_height, *_ = await asyncio.gather(*tasks)
-            sync_dict["status"] = "synced"
+            sync_dict["status"] = ChainSyncStatus.SYNCED
             sync_dict["current_block"] = curr_height
             sync_dict["latest_block"] = latest_height
         else:
-            sync_dict["status"] = "syncing"
+            sync_dict["status"] = ChainSyncStatus.SYNCING
             sync_dict["current_block"] = sync_data["currentBlock"]
             sync_dict["latest_block"] = sync_data["latestBlock"]
         return sync_dict
@@ -65,9 +66,6 @@ class EthConnector(Web3Connector):
             message = template.format(type(e).__name__, e.args)
             print(message)
         except (ConnectionError, Exception):
-            self.destination.sync_status.labels(*self.labels).set(-1)
+            self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.STOPPED)
         else:
-            if sync_data["status"] == "syncing":
-                self.destination.sync_status.labels(*self.labels).set(0)
-            else:
-                self.destination.sync_status.labels(*self.labels).set(1)
+            self.destination.sync_status.labels(*self.labels).set(sync_data["status"])

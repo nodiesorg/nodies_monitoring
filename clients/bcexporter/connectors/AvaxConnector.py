@@ -6,6 +6,7 @@ import aiohttp
 
 from connectors.EthConnector import EthConnector
 from data.AvaxChainID import AvaxChainID
+from data.ChainSyncStatus import ChainSyncStatus
 from data.PoktChainID import PoktChainID
 
 
@@ -43,7 +44,7 @@ class AvaxConnector(EthConnector):
 
     async def get_sync_data(self):
         is_bootstrapped = await self.is_bootstrapped()
-        sync_dict = {"status": "synced" if is_bootstrapped else "synced"}
+        sync_dict = {"status": ChainSyncStatus.SYNCED if is_bootstrapped else ChainSyncStatus.SYNCING}
         tasks = [
             asyncio.ensure_future(self.get_current_block()),
             asyncio.ensure_future(self.get_latest_block())
