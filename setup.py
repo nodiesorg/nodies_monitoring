@@ -47,7 +47,6 @@ def update_prometheus_config():
 
 def update_loki():
     template_dict = get_template('templates/loki-config.yml')
-    template_dict["server"]["http_listen_port"] = settings["server"]["ports"]["loki"]
     generate_config(template_dict, 'server/loki/loki-config.yml')
 
 
