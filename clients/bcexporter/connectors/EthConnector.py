@@ -3,9 +3,9 @@ import asyncio
 from web3 import Web3, AsyncHTTPProvider
 from web3.eth import AsyncEth
 from web3.middleware import async_geth_poa_middleware
-
 from connectors.Web3Connector import Web3Connector
 from data.ChainSyncStatus import ChainSyncStatus
+import traceback
 
 
 class EthConnector(Web3Connector):
@@ -56,16 +56,18 @@ class EthConnector(Web3Connector):
             latest_height = sync_data["latest_block"]
             self.destination.curr_height.labels(*self.labels).set(curr_height)
             self.destination.latest_height.labels(*self.labels).set(latest_height)
+            self.destination.sync_status.labels(*self.labels).set(sync_data["status"])
             print(f"{self.endpoint_uri} sent metrics for chain {self.id}")
             print(f'Status: {sync_data["status"]}\nCurrent Height: {curr_height}\nLatest Height: {latest_height}')
-        except ConnectionError:
-            print(f"Could not connect to {self.endpoint_uri}")
+        except (asyncio.TimeoutError) as e:
+            print(f'Timeout Exception with: {self.endpoint_uri}')
+            traceback.print_exc()
+            self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.STOPPED)
+            self.destination.curr_height.labels(*self.labels).set(0)
+            self.destination.latest_height.labels(*self.labels).set(0)
         except Exception as e:
             print(f'Exception with: {self.endpoint_uri}')
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(e).__name__, e.args)
-            print(message)
-        except (ConnectionError, Exception):
-            self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.STOPPED)
-        else:
-            self.destination.sync_status.labels(*self.labels).set(sync_data["status"])
+            traceback.print_exc()
+            self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.UNKNOWN)
+            self.destination.curr_height.labels(*self.labels).set(0)
+            self.destination.latest_height.labels(*self.labels).set(0)

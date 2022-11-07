@@ -93,6 +93,7 @@ class AvaxConnector(EthConnector):
         endpoint = urllib.parse.urljoin(self.base_url, "/ext/info")
         async with aiohttp.ClientSession() as async_session:
             response = await async_session.post(
+                timeout=5,
                 url=endpoint,
                 json={
                     "jsonrpc": "2.0",
