@@ -68,6 +68,7 @@ class EthConnector(Web3Connector):
         except Exception as e:
             print(f'Exception with: {self.endpoint_uri}')
             traceback.print_exc()
-            self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.UNKNOWN)
+            #temporary until graphs can handle UNKNOWN
+            self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.STOPPED)
             self.destination.curr_height.labels(*self.labels).set(0)
             self.destination.latest_height.labels(*self.labels).set(0)
