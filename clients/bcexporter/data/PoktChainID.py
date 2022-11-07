@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class PoktChainID(Enum):
+class PoktChainID(str, Enum):
     DFK = "03DF"
     SWIMMER = "03CB"
     AVAX = "0003"

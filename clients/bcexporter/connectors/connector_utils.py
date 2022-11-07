@@ -8,7 +8,6 @@ from data.PoktChainID import PoktChainID
 def create_connectors(appmetrics: AppMetrics, chains):
     connectors = []
     for chain in chains:
-
         if chain["id"] == PoktChainID.SWIMMER:
             connectors.append(AvaxConnector(endpoint_uri=chain["url"], destination=appmetrics, id=chain["id"],
                                             chain=AvaxChainID.SWIMMER))
