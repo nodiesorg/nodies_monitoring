@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 2,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -155,7 +155,7 @@
           },
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "max by(endpoint) (max_over_time(sync_state{blockchain_id=~\"$blockchain_id\"}[5m]))",
+          "expr": "max by(endpoint) (last_over_time(sync_state{blockchain_id=~\"$blockchain_id\"}[5m]))",
           "format": "time_series",
           "instant": true,
           "legendFormat": "__auto",
@@ -583,6 +583,6 @@
   "timezone": "utc",
   "title": "Chain Metrics (Blockchain Exporter)",
   "uid": "S1IgF84Vk",
-  "version": 65,
+  "version": 66,
   "weekStart": ""
 }
