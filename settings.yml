@@ -20,18 +20,20 @@ server:
     minio: 9000
     promtail: 9080
   alerts:
-    slack:
-      enabled: False
-      url: https://hooks.slack.com/services/your_slack_webhook_string
-    discord:
-      enabled: False
-      url: https://discord.com/api/webhooks/your_uuid/your_other_uuid
-    teams:
-      enabled: False
-      url: https://ms_teams_url
-    email:
-      enabled: False
-      addresses: ["me@example.com", "you@example.com"]
+    interval: 60s
+    contactpoints:
+      slack:
+        enabled: False
+        url: https://hooks.slack.com/services/your_slack_webhook_string
+      discord:
+        enabled: False
+        url: https://discord.com/api/webhooks/your_uuid/your_other_uuid
+      teams:
+        enabled: False
+        url: https://ms_teams_url
+      email:
+        enabled: False
+        addresses: ["me@example.com", "you@example.com"]
 
   exporter_endpoints:
     cadvisor: ["ip:port"]
