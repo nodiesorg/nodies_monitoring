@@ -26,24 +26,28 @@ class EthConnector(Web3Connector):
         # If not currently syncing
         if not sync_data:
             tasks = [
-                asyncio.ensure_future(self.get_current_block()),
-                asyncio.ensure_future(self.get_latest_block())
+                asyncio.ensure_future(self.get_current_block())
             ]
-            curr_height, latest_height, *_ = await asyncio.gather(*tasks)
+            curr_height, *_ = await asyncio.gather(*tasks)
             sync_dict["status"] = ChainSyncStatus.SYNCED
             sync_dict["current_block"] = curr_height
-            sync_dict["latest_block"] = latest_height
+            sync_dict["latest_block"] = curr_height
         else:
             sync_dict["status"] = ChainSyncStatus.SYNCING
-            sync_dict["current_block"] = sync_data["currentBlock"]
-            sync_dict["latest_block"] = sync_data["latestBlock"]
+            sync_dict["current_block"] = sync_data.get("currentBlock", 0)
+            sync_dict["latest_block"] = sync_data.get("highestBlock", 0)
+
         return sync_dict
 
     async def get_current_block(self):
         return await self.w3.eth.get_block_number()
 
     async def get_latest_block(self):
-        return (await self.w3.eth.get_block("latest"))["number"]
+        """
+        Latest block is same as current block whenever node is synced.
+        We can later replace this with a value from an explorer or an altruist if needed.
+        """
+        return await self.get_current_block()
 
     async def report_metrics(self):
         """
