@@ -5,6 +5,9 @@ clients:
     cadvisor: 8080
     promtail: 9080
     loki: 3100
+  blockchain_exporter:
+    alias_enabled: True
+    alias_name: LOCALHOST
   promtail_log_root_path: ./log
 
 server:
@@ -28,6 +31,15 @@ server:
     email:
       enabled: False
       addresses: ["me@example.com", "you@example.com"]
+    webhook:
+      enabled: False
+      url: https://endpoint_url
+      httpMethod: POST # <string> options: POST, PUT
+      username: my_username
+      password: my_password
+      authorization_scheme: my_bearer
+      authorization_credentials: my_credentials
+      maxAlerts: '10'
 
   exporter_endpoints:
     cadvisor: ["111.222.333.002:8080"]
