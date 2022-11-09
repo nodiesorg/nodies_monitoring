@@ -128,6 +128,10 @@ def update_bcexporter():
     blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
     template_dict = get_template('templates/clients/config.yml')
     template_dict["exporter_port"] = blockchain_exporter_port
+    if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
+        template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias_name"]
+    else:
+        template_dict["alias"]=""
     generate_config(template_dict, 'clients/bcexporter/config/config.yml')
 
 

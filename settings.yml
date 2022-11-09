@@ -5,10 +5,14 @@ clients:
     cadvisor: 8080
     promtail: 9080
     loki: 3100
+  blockchain_exporter:
+    alias_enabled: false
+    alias_name: "TEST"
+
   promtail_log_root_path: ./log
 
 server:
-  endpoint: 111.222.333.001
+  endpoint: ip
   ports:
     loki: 3100
     prometheus: 9090
@@ -30,6 +34,6 @@ server:
       addresses: ["me@example.com", "you@example.com"]
 
   exporter_endpoints:
-    cadvisor: ["111.222.333.002:8080"]
-    blockchain: ["111.222.333.002:9877"]
-    node: ["111.222.333.002:9100"]
+    cadvisor: ["ip:port"]
+    blockchain: ["ip:port"]
+    node: ["ip:port"]

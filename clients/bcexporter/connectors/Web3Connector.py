@@ -16,7 +16,7 @@ class Web3Connector(ABC):
     """
 
     @abstractmethod
-    def __init__(self, endpoint_uri, destination: AppMetrics, request_kwargs=None, session=None):
+    def __init__(self, chain_url_obj, destination: AppMetrics, request_kwargs=None, session=None):
         pass
 
     @abstractmethod

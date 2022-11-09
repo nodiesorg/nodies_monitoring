@@ -10,11 +10,11 @@ import traceback
 
 class EthConnector(Web3Connector):
 
-    def __init__(self, endpoint_uri, destination, id, request_kwargs=None):
+    def __init__(self, chain_url_obj, destination, id, request_kwargs=None):
         self.id = id
-        self.endpoint_uri = endpoint_uri
-        self.labels = [id, endpoint_uri]
-        self.w3 = Web3(AsyncHTTPProvider(endpoint_uri, request_kwargs)
+        self.chain_url_obj = chain_url_obj
+        self.labels = [id, str(chain_url_obj)]
+        self.w3 = Web3(AsyncHTTPProvider(chain_url_obj.get_endpoint(), request_kwargs)
                        , modules={'eth': AsyncEth}
                        , middlewares=[async_geth_poa_middleware])
         self.destination = destination
@@ -57,16 +57,16 @@ class EthConnector(Web3Connector):
             self.destination.curr_height.labels(*self.labels).set(curr_height)
             self.destination.latest_height.labels(*self.labels).set(latest_height)
             self.destination.sync_status.labels(*self.labels).set(sync_data["status"])
-            print(f"{self.endpoint_uri} sent metrics for chain {self.id}")
+            print(f"{self.chain_url_obj.get_endpoint()} sent metrics for chain {self.id}")
             print(f'Status: {sync_data["status"]}\nCurrent Height: {curr_height}\nLatest Height: {latest_height}')
         except (asyncio.TimeoutError) as e:
-            print(f'Timeout Exception with: {self.endpoint_uri}')
+            print(f'Timeout Exception with: {self.chain_url_obj.get_endpoint()}')
             traceback.print_exc()
             self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.STOPPED)
             self.destination.curr_height.labels(*self.labels).set(0)
             self.destination.latest_height.labels(*self.labels).set(0)
         except Exception as e:
-            print(f'Exception with: {self.endpoint_uri}')
+            print(f'Exception with: {self.chain_url_obj.get_endpoint()}')
             traceback.print_exc()
             #temporary until graphs can handle UNKNOWN
             self.destination.sync_status.labels(*self.labels).set(ChainSyncStatus.STOPPED)

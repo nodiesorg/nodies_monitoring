@@ -13,14 +13,14 @@ from data.PoktChainID import PoktChainID
 class AvaxConnector(EthConnector):
     """
     This constructor will set the parent constructor's endpoint_uri to end with /ext/bc/C/rpc as a default.
-    The base_url is an extra member in this field because some api calls don't require any suffix.
+    The chain_url_obj is an extra member in this field because some api calls don't require any suffix.
     Chain is a reference to the blockchain number. For avalanche this is P/C/X. DFKs for example is
     q2aTwKuyzgs8pynF7UXBZCU7DejbZbZ6EUyHr3JQzYgwNPUPi
     """
 
-    def __init__(self, endpoint_uri, destination, id, chain, request_kwargs=None):
-        self.base_url = endpoint_uri
-        self.fqd = urllib.parse.urljoin(self.base_url, f"/ext/bc/{chain}/rpc")
+    def __init__(self, chain_url_obj, destination, id, chain, request_kwargs=None):
+        self.chain_url_obj = chain_url_obj
+        self.fqd = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc")
         super().__init__(self.fqd, destination, id, request_kwargs)
         self.chain = chain
         self._set_labels()
@@ -30,17 +30,17 @@ class AvaxConnector(EthConnector):
         This method will set the labels ID according to the passed AVAX chain ID:
         """
         if self.chain == AvaxChainID.DFK.value:
-            self.labels = [PoktChainID.DFK.value, self.base_url]
+            self.labels = [PoktChainID.DFK.value, str(self.chain_url_obj)]
         elif self.chain == AvaxChainID.SWIMMER.value:
-            self.labels = [PoktChainID.SWIMMER.value, self.base_url]
+            self.labels = [PoktChainID.SWIMMER.value, str(self.chain_url_obj)]
         elif self.chain == "P":
-            self.labels = [PoktChainID.AVAXP.value, self.base_url]
+            self.labels = [PoktChainID.AVAXP.value, str(self.chain_url_obj)]
         elif self.chain == "C":
-            self.labels = [PoktChainID.AVAXC.value, self.base_url]
+            self.labels = [PoktChainID.AVAXC.value, str(self.chain_url_obj)]
         elif self.chain == "X":
-            self.labels = [PoktChainID.AVAXX.value, self.base_url]
+            self.labels = [PoktChainID.AVAXX.value, str(self.chain_url_obj)]
         else:
-            self.labels = [self.id, self.base_url]
+            self.labels = [self.id, str(self.chain_url_obj)]
 
     async def get_sync_data(self):
         is_bootstrapped = await self.is_bootstrapped()
@@ -75,7 +75,7 @@ class AvaxConnector(EthConnector):
             return await super().get_current_block()
 
         async with aiohttp.ClientSession() as async_session:
-            endpoint = urllib.parse.urljoin(self.base_url, "/ext/bc/P")
+            endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/bc/P")
             response = await async_session.post(
                 url=endpoint,
                 json={
@@ -90,7 +90,7 @@ class AvaxConnector(EthConnector):
             return int(json_object["result"]["height"])
 
     async def is_bootstrapped(self):
-        endpoint = urllib.parse.urljoin(self.base_url, "/ext/info")
+        endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/info")
         async with aiohttp.ClientSession() as async_session:
             response = await async_session.post(
                 timeout=5,
@@ -109,7 +109,7 @@ class AvaxConnector(EthConnector):
             return json_object["result"]["isBootstrapped"]
 
     async def get_outstanding_blocks(self):
-        endpoint = urllib.parse.urljoin(self.base_url, "/ext/health")
+        endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/health")
         async with aiohttp.ClientSession() as async_session:
             response = await async_session.post(
                 url=endpoint,
