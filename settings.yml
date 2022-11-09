@@ -6,13 +6,12 @@ clients:
     promtail: 9080
     loki: 3100
   blockchain_exporter:
-    alias_enabled: false
-    alias_name: "TEST"
-
+    alias_enabled: True
+    alias_name: LOCALHOST
   promtail_log_root_path: ./log
 
 server:
-  endpoint: ip
+  endpoint: 111.222.333.001
   ports:
     loki: 3100
     prometheus: 9090
@@ -34,8 +33,17 @@ server:
       email:
         enabled: False
         addresses: ["me@example.com", "you@example.com"]
+      webhook:
+        enabled: False
+        url: https://endpoint_url
+        httpMethod: POST # <string> options: POST, PUT
+        username: my_username
+        password: my_password
+        authorization_scheme: my_bearer
+        authorization_credentials: my_credentials
+        maxAlerts: '10'
 
   exporter_endpoints:
-    cadvisor: ["ip:port"]
-    blockchain: ["ip:port"]
-    node: ["ip:port"]
+    cadvisor: ["111.222.333.002:8080"]
+    blockchain: ["111.222.333.002:9877"]
+    node: ["111.222.333.002:9100"]

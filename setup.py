@@ -71,9 +71,17 @@ def update_alerting():
     generate_config(template_dict, 'server/grafana_provisioning/alerting/alerting.yaml')
 
 
+def map_contactpoint_parameter(receiver_idx: int, alert_name: str, alert_dict: dict, template_dict: dict):
+    for parameter in alert_dict:
+        if parameter == "addresses" and alert_name == "email":
+            template_dict["contactPoints"][0]["receivers"][receiver_idx]["settings"]["addresses"] = ';'.join(alert_dict["addresses"])
+        else:
+            template_dict["contactPoints"][0]["receivers"][receiver_idx]["settings"][parameter] = alert_dict[parameter]
+
+
 def update_alerting_contactpoint():
     template_dict = get_template('templates/alerting/contactpoint.yaml')
-    valid_args = ["slack", "discord", "teams", "email"]
+    valid_args = ["slack", "discord", "teams", "email", "webhook"]
     for alert_name, alert_dict in settings["server"]["alerts"]["contactpoints"].items():
         if alert_name not in valid_args:
             print(f"not a supported contactpoint {alert_name}")
@@ -81,10 +89,7 @@ def update_alerting_contactpoint():
             for idx, receiver_dict in enumerate(template_dict["contactPoints"][0]["receivers"]):
                 if receiver_dict["type"] == alert_name:
                     if alert_dict["enabled"]:
-                        if alert_name == 'email':
-                            template_dict["contactPoints"][0]["receivers"][idx]["settings"]["addresses"] = ';'.join(alert_dict["addresses"])
-                        else:
-                            template_dict["contactPoints"][0]["receivers"][idx]["settings"]["url"] = alert_dict["url"]
+                        map_contactpoint_parameter(idx, alert_name, alert_dict, template_dict)
                         if not Path('server/grafana_provisioning/alerting/notificationpolicies.yaml').exists():
                             update_notification_policies()
                     else:

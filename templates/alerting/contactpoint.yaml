@@ -43,3 +43,13 @@ contactPoints:
           singleEmail: false
           subject: "{{ if eq .Status \"firing\" }}:fire:{{ else }}:white_check_mark:{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}"
           message: "{{ template \"slack\" . }}"
+      - uid: grafana-default-webhook
+        type: webhook
+        settings:
+          url: https://endpoint_url
+          httpMethod: POST # <string> options: POST, PUT
+          username: abc
+          password: abc123
+          authorization_scheme: Bearer
+          authorization_credentials: abc123
+          maxAlerts: '10'
