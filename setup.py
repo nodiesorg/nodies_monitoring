@@ -64,10 +64,17 @@ def update_notification_policies():
     generate_config(template_dict, 'server/grafana_provisioning/alerting/notificationpolicies.yaml')
 
 
+def update_alerting():
+    template_dict = get_template('templates/alerting/alerting.yaml')
+    interval = settings["server"]["alerts"]["interval"]
+    template_dict["groups"][0]["interval"] = interval
+    generate_config(template_dict, 'server/grafana_provisioning/alerting/alerting.yaml')
+
+
 def update_alerting_contactpoint():
     template_dict = get_template('templates/alerting/contactpoint.yaml')
     valid_args = ["slack", "discord", "teams", "email"]
-    for alert_name, alert_dict in settings["server"]["alerts"].items():
+    for alert_name, alert_dict in settings["server"]["alerts"]["contactpoints"].items():
         if alert_name not in valid_args:
             print(f"not a supported contactpoint {alert_name}")
         else:
@@ -174,6 +181,7 @@ def main():
     update_loki()
     update_datasource("loki")
     update_datasource("prometheus")
+    update_alerting()
     update_alerting_contactpoint()
     update_server_docker_compose()
     update_permissions_recursively('server/grafana/', 472, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
