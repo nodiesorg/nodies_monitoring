@@ -69,7 +69,12 @@
                 "-1": {
                   "color": "red",
                   "index": 2,
-                  "text": "Not Syncing"
+                  "text": "Stopped"
+                },
+                "-1.1": {
+                  "color": "blue",
+                  "index": 3,
+                  "text": "Unknown"
                 }
               },
               "type": "value"
@@ -78,8 +83,8 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "color": "blue",
-                  "index": 3,
+                  "color": "transparent",
+                  "index": 4,
                   "text": "No Data"
                 }
               },
@@ -90,8 +95,12 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue",
+                "color": "transparent",
                 "value": null
+              },
+              {
+                "color": "blue",
+                "value": -1.2
               },
               {
                 "color": "red",
@@ -117,7 +126,7 @@
             "properties": [
               {
                 "id": "min",
-                "value": -1
+                "value": -1.2
               },
               {
                 "id": "max",
@@ -583,6 +592,6 @@
   "timezone": "utc",
   "title": "Chain Metrics (Blockchain Exporter)",
   "uid": "S1IgF84Vk",
-  "version": 66,
+  "version": 67,
   "weekStart": ""
 }
