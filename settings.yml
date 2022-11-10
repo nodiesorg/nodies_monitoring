@@ -30,7 +30,7 @@ server:
   promtail:
     port: 9080
   alerts:
-    interval: 60s
+    stale_range: 5m
     contactpoints:
       slack:
         enabled: False

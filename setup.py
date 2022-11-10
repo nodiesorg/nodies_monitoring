@@ -60,10 +60,17 @@ def update_notification_policies():
     generate_config(template_dict, 'server/grafana_provisioning/alerting/notificationpolicies.yaml')
 
 
+def convert_to_seconds(time_string: str) -> int:
+    seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400, "w": 604800}
+    return int(time_string[:-1]) * seconds_per_unit[time_string[-1]]
+
+
 def update_alerting():
     template_dict = get_template('templates/alerting/alerting.yaml')
-    interval = settings["server"]["alerts"]["interval"]
-    template_dict["groups"][0]["interval"] = interval
+    stale_range = settings["server"]["alerts"]["stale_range"]
+    template_dict["groups"][0]["rules"][0]["data"][0]["relativeTimeRange"]["from"] = convert_to_seconds(stale_range)
+    template_dict["groups"][0]["rules"][0]["data"][2]["relativeTimeRange"]["from"] = convert_to_seconds(stale_range)
+    template_dict["groups"][0]["rules"][0]["annotations"]["description"] = template_dict["groups"][0]["rules"][0]["annotations"]["description"].replace('x time', stale_range)
     generate_config(template_dict, 'server/grafana_provisioning/alerting/alerting.yaml')
 
 
