@@ -23,21 +23,17 @@ def generate_config(completed_template: dict, output_path: str):
 
 settings = get_settings()
 
-
-# server update methods
-
-
 def update_prometheus_config():
     template_dict = get_template('templates/prometheus.yml')
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
-            targets = settings["server"]["exporter_endpoints"]["node"]
+            targets = settings["server"]["prometheus"]["exporter_endpoints"]["node"]
             job_dict["static_configs"][0]["targets"] = targets
         elif job_dict["job_name"] == "blockchain":
-            targets = settings["server"]["exporter_endpoints"]["blockchain"]
+            targets = settings["server"]["prometheus"]["exporter_endpoints"]["blockchain"]
             job_dict["static_configs"][0]["targets"] = targets
         elif job_dict["job_name"] == "cadvisor":
-            targets = settings["server"]["exporter_endpoints"]["cadvisor"]
+            targets = settings["server"]["prometheus"]["exporter_endpoints"]["cadvisor"]
             job_dict["static_configs"][0]["targets"] = targets
         else:
             print(
@@ -47,14 +43,14 @@ def update_prometheus_config():
 
 def update_loki():
     template_dict = get_template('templates/loki-config.yml')
-    template_dict["server"]["http_listen_port"] = settings["server"]["ports"]["loki"]
+    template_dict["server"]["http_listen_port"] = settings["server"]["loki"]["port"]
     generate_config(template_dict, 'server/loki/loki-config.yml')
 
 
 def update_datasource(datasource: str):
     template_dict = get_template(f'templates/datasources/{datasource}.yaml')
-    endpoint = settings["server"]["endpoint"]
-    port = settings["server"]["ports"][datasource]
+    endpoint = settings["server"]["host_ip"]
+    port = settings["server"][datasource]["port"]
     template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
     generate_config(template_dict, f"server/grafana_provisioning/datasources/{datasource}.yaml")
 
@@ -101,7 +97,7 @@ def update_server_docker_compose():
     template_dict = get_template('templates/docker-compose.yml')
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
-        port_str = settings["server"]["ports"][service]
+        port_str = settings["server"][service]["port"]
         default_port_str = (template_dict["services"][service]['ports'][0]).split(':')[0]
         template_dict["services"][service]['ports'] = [f"{port_str}:{default_port_str}"]
     generate_config(template_dict, "server/docker-compose.yml")
@@ -126,10 +122,10 @@ def update_permissions_recursively(dir_path: str, user_id: int, perms: int):
 # client update methods
 def update_promtail():
     template_dict = get_template("templates/clients/promtail-config.yml")
-    domain = f"http://{settings['server']['endpoint']}"
-    loki_port = settings['clients']['ports']['loki']
+    domain = f"http://{settings['clients']['promtail']['loki_endpoint']}"
+    loki_port = settings['clients']['promtail']['loki_port']
     full_url = f"{domain}:{loki_port}/loki/api/v1/push"
-    promtail_port = settings["clients"]["ports"]["promtail"]
+    promtail_port = settings["clients"]["promtail"]["port"]
 
     template_dict["clients"][0]["url"] = full_url
     template_dict["server"]["http_listen_port"] = int(promtail_port)
@@ -137,7 +133,7 @@ def update_promtail():
 
 
 def update_bcexporter():
-    blockchain_exporter_port = settings["clients"]["ports"]["blockchain_exporter"]
+    blockchain_exporter_port = settings["clients"]["blockchain_exporter"]["port"]
     template_dict = get_template('templates/clients/config.yml')
     template_dict["exporter_port"] = blockchain_exporter_port
     if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
@@ -166,11 +162,11 @@ def update_clients_docker_compose():
     arg_clients = get_args().clients
     for service_name, service_dict in template_dict["services"].copy().items():
         if service_name in arg_clients:
-            port_str = settings["clients"]["ports"][service_name]
+            port_str = settings["clients"][service_name]["port"]
             default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
             template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
             if service_name == 'promtail':
-                promtail_log_root_path = settings["clients"]["promtail_log_root_path"]
+                promtail_log_root_path = settings["clients"]["promtail"]["log_root_path"]
                 for idx, promtail_volume in enumerate(template_dict["services"][service_name]["volumes"]):
                     if promtail_volume.endswith('/var/log'):
                         template_dict["services"][service_name]["volumes"][idx] = f"{promtail_log_root_path}:/var/log"

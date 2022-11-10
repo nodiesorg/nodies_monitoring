@@ -1,23 +1,34 @@
 clients:
-  ports:
-    node_exporter: 9100
-    blockchain_exporter: 9877
-    cadvisor: 8080
-    promtail: 9080
-    loki: 3100
+  node_exporter:
+    port: 9100
+  cadvisor:
+    port: 8080
+  promtail:
+    port: 9080
+    loki_endpoint: 111.222.333.001
+    loki_port: 3100
+    log_root_path: ./log
   blockchain_exporter:
+    port: 9877
     alias_enabled: True
     alias_name: LOCALHOST
-  promtail_log_root_path: ./log
 
 server:
-  endpoint: 111.222.333.001
-  ports:
-    loki: 3100
-    prometheus: 9090
-    grafana: 3000
-    minio: 9000
-    promtail: 9080
+  host_ip: 111.222.333.001
+  loki:
+    port: 3100
+  prometheus:
+    port: 9090
+    exporter_endpoints:
+      cadvisor: ["111.222.333.002:8080"]
+      blockchain: ["111.222.333.002:9877"]
+      node: ["111.222.333.002:9100"]
+  grafana:
+    port: 3000
+  minio:
+    port: 9000
+  promtail:
+    port: 9080
   alerts:
     interval: 60s
     contactpoints:
@@ -42,8 +53,3 @@ server:
         authorization_scheme: my_bearer
         authorization_credentials: my_credentials
         maxAlerts: '10'
-
-  exporter_endpoints:
-    cadvisor: ["111.222.333.002:8080"]
-    blockchain: ["111.222.333.002:9877"]
-    node: ["111.222.333.002:9100"]
