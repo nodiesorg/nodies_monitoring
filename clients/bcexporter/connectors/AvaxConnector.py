@@ -4,6 +4,8 @@ import urllib.parse
 
 import aiohttp
 
+from appmetrics.AppMetrics import AppMetrics
+from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
 from data.AvaxChainID import AvaxChainID
 from data.ChainSyncStatus import ChainSyncStatus
@@ -18,7 +20,7 @@ class AvaxConnector(EthConnector):
     q2aTwKuyzgs8pynF7UXBZCU7DejbZbZ6EUyHr3JQzYgwNPUPi
     """
 
-    def __init__(self, chain_url_obj, destination, id, chain, request_kwargs=None):
+    def __init__(self, chain_url_obj: ChainUrl, destination: AppMetrics, id: str, chain: str, request_kwargs=None):
         self.chain_url_obj = chain_url_obj
         self.fqd = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc")
         super().__init__(self.fqd, destination, id, request_kwargs)
@@ -42,7 +44,7 @@ class AvaxConnector(EthConnector):
         else:
             self.labels = [self.id, str(self.chain_url_obj)]
 
-    async def get_sync_data(self):
+    async def get_sync_data(self) -> dict:
         is_bootstrapped = await self.is_bootstrapped()
         sync_dict = {"status": ChainSyncStatus.SYNCED if is_bootstrapped else ChainSyncStatus.SYNCING}
         tasks = [
@@ -55,7 +57,7 @@ class AvaxConnector(EthConnector):
 
         return sync_dict
 
-    async def get_latest_block(self):
+    async def get_latest_block(self) -> int:
 
         if self.chain == "X":
             # TODO: Determine how to retrieve X sync data
@@ -65,7 +67,7 @@ class AvaxConnector(EthConnector):
         outstanding = await self.get_outstanding_blocks()
         return curr + outstanding
 
-    async def get_current_block(self):
+    async def get_current_block(self) -> int:
 
         if self.chain == "X":
             # TODO: Determine how to retrieve X sync data
@@ -89,7 +91,7 @@ class AvaxConnector(EthConnector):
             json_object = json.loads((await response.content.read()).decode("utf8"))
             return int(json_object["result"]["height"])
 
-    async def is_bootstrapped(self):
+    async def is_bootstrapped(self) -> bool:
         endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/info")
         async with aiohttp.ClientSession() as async_session:
             response = await async_session.post(

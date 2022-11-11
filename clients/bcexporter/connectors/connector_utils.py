@@ -1,12 +1,12 @@
 from appmetrics.AppMetrics import AppMetrics
 from connectors.AvaxConnector import AvaxConnector
+from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
 from data.AvaxChainID import AvaxChainID
 from data.PoktChainID import PoktChainID
-from connectors.ChainUrl import ChainUrl
 
 
-def create_connectors(appmetrics: AppMetrics, chains):
+def create_connectors(appmetrics: AppMetrics, chains) -> list:
     connectors = []
     for chain in chains:
         chain_url_obj = ChainUrl(chain["url"])
