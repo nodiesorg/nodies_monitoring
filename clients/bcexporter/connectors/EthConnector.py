@@ -1,16 +1,19 @@
 import asyncio
+import traceback
 
 from web3 import Web3, AsyncHTTPProvider
 from web3.eth import AsyncEth
 from web3.middleware import async_geth_poa_middleware
+
+from appmetrics.AppMetrics import AppMetrics
+from connectors.ChainUrl import ChainUrl
 from connectors.Web3Connector import Web3Connector
 from data.ChainSyncStatus import ChainSyncStatus
-import traceback
 
 
 class EthConnector(Web3Connector):
 
-    def __init__(self, chain_url_obj, destination, id, request_kwargs=None):
+    def __init__(self, chain_url_obj: ChainUrl, destination: AppMetrics, id: str, request_kwargs=None):
         self.id = id
         self.chain_url_obj = chain_url_obj
         self.labels = [id, str(chain_url_obj)]
@@ -19,7 +22,7 @@ class EthConnector(Web3Connector):
                        , middlewares=[async_geth_poa_middleware])
         self.destination = destination
 
-    async def get_sync_data(self):
+    async def get_sync_data(self) -> dict:
         # Returns dict if currently syncing, otherwise returns False
         sync_data = await self.w3.eth.syncing
         sync_dict = {}
@@ -39,10 +42,10 @@ class EthConnector(Web3Connector):
 
         return sync_dict
 
-    async def get_current_block(self):
+    async def get_current_block(self) -> int:
         return await self.w3.eth.get_block_number()
 
-    async def get_latest_block(self):
+    async def get_latest_block(self) -> int:
         """
         Latest block is same as current block whenever node is synced.
         We can later replace this with a value from an explorer or an altruist if needed.
