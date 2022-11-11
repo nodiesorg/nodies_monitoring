@@ -4,6 +4,7 @@ import urllib.parse
 
 import aiohttp
 
+from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
 from data.AvaxChainID import AvaxChainID
 from data.ChainSyncStatus import ChainSyncStatus
@@ -19,9 +20,8 @@ class AvaxConnector(EthConnector):
     """
 
     def __init__(self, chain_url_obj, destination, id, chain, request_kwargs=None):
-        self.chain_url_obj = chain_url_obj
-        self.fqd = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc")
-        super().__init__(self.fqd, destination, id, request_kwargs)
+        self.chain_url_obj = ChainUrl(urllib.parse.urljoin(chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc"))
+        super().__init__(self.chain_url_obj, destination, id, request_kwargs)
         self.chain = chain
         self._set_labels()
 
