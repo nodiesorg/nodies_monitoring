@@ -1,17 +1,16 @@
 import ipaddress
 import re
-
 from config.Config import Config
-
-
-def get_alias() -> str:
-    return Config().alias
 
 
 class ChainUrl:
 
-    def __init__(self, endpoint):
+    def __init__(self, endpoint, alias=None):
         self.endpoint = endpoint
+        self.alias = Config().alias
+
+    def get_alias(self) -> str:
+        return self.alias
 
     def get_endpoint(self) -> str:
         return self.endpoint
@@ -25,6 +24,6 @@ class ChainUrl:
             pass
         else:
             if ip.is_private:
-                endpoint += get_alias()
+                endpoint += self.get_alias()
         finally:
             return endpoint
