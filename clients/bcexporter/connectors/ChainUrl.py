@@ -1,13 +1,12 @@
 import ipaddress
 import re
-from config.Config import Config
 
 
 class ChainUrl:
 
     def __init__(self, endpoint, alias=None):
         self.endpoint = endpoint
-        self.alias = Config().alias
+        self.alias = alias
 
     def get_alias(self) -> str:
         return self.alias
