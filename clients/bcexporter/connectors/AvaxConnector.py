@@ -22,7 +22,7 @@ class AvaxConnector(EthConnector):
 
     def __init__(self, chain_url_obj: ChainUrl, destination: AppMetrics, id: str, chain: str, request_kwargs=None):
         self.chain_url_obj = chain_url_obj
-        self.fqd = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc")
+        self.fqd = ChainUrl(urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc"))
         super().__init__(self.fqd, destination, id, request_kwargs)
         self.chain = chain
         self._set_labels()
