@@ -1,4 +1,6 @@
 import argparse
+import copy
+import json
 import os
 import stat
 from pathlib import Path
@@ -12,6 +14,11 @@ def get_template(template_path: str) -> dict:
     return template_dict
 
 
+def get_chains(chain_path: str) -> list:
+    with open(Path(chain_path), "r") as stream:
+        return json.load(stream)
+
+
 def get_settings():
     return get_template("settings.yml")
 
@@ -22,6 +29,7 @@ def generate_config(completed_template: dict, output_path: str):
 
 
 settings = get_settings()
+
 
 def update_prometheus_config():
     template_dict = get_template('templates/prometheus.yml')
@@ -67,10 +75,23 @@ def convert_to_seconds(time_string: str) -> int:
 
 def update_alerting():
     template_dict = get_template('templates/alerting/alerting.yaml')
-    stale_range = settings["server"]["alerts"]["stale_range"]
-    template_dict["groups"][0]["rules"][0]["data"][0]["relativeTimeRange"]["from"] = convert_to_seconds(stale_range)
-    template_dict["groups"][0]["rules"][0]["data"][2]["relativeTimeRange"]["from"] = convert_to_seconds(stale_range)
-    template_dict["groups"][0]["rules"][0]["annotations"]["description"] = template_dict["groups"][0]["rules"][0]["annotations"]["description"].replace('x time', stale_range)
+    chains_list = get_chains('clients/bcexporter/config/chains.json')
+    default_range = settings["server"]["alerts"]["current_height"]["default_range"]
+    overrides = settings["server"]["alerts"]["current_height"]["overrides"]
+    overrides_list = []
+    for chain in chains_list:
+        curr_range = overrides.get(f'{chain["id"]}', default_range)
+        temp_curr_height_alert_dict = copy.deepcopy(template_dict["groups"][0]["rules"][0])
+        curr_range_in_secs = convert_to_seconds(curr_range)
+        temp_curr_height_alert_dict["uid"] = f'{temp_curr_height_alert_dict["uid"]}_{chain["id"]}'
+        temp_curr_height_alert_dict["title"] = f'{temp_curr_height_alert_dict["title"]}_{chain["id"]}'
+        temp_curr_height_alert_dict["data"][0]["relativeTimeRange"]["from"] = curr_range_in_secs
+        temp_curr_height_alert_dict["data"][0]["model"]["expr"] = temp_curr_height_alert_dict["data"][0]["model"]["expr"].replace('XXXX', f'{chain["id"]}')
+        temp_curr_height_alert_dict["data"][2]["relativeTimeRange"]["from"] = curr_range_in_secs
+        temp_curr_height_alert_dict["data"][2]["model"]["expr"] = temp_curr_height_alert_dict["data"][2]["model"]["expr"].replace('XXXX', f'{chain["id"]}')
+        temp_curr_height_alert_dict["annotations"]["description"] = temp_curr_height_alert_dict["annotations"]["description"].replace('x time', curr_range)
+        overrides_list.append(temp_curr_height_alert_dict)
+    template_dict["groups"][0]["rules"] = overrides_list
     generate_config(template_dict, 'server/grafana_provisioning/alerting/alerting.yaml')
 
 
@@ -146,7 +167,7 @@ def update_bcexporter():
     if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
         template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias_name"]
     else:
-        template_dict["alias"]=""
+        template_dict["alias"] = ""
     generate_config(template_dict, 'clients/bcexporter/config/config.yml')
 
 

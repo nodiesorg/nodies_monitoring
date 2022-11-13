@@ -30,7 +30,12 @@ server:
   promtail:
     port: 9080
   alerts:
-    stale_range: 5m
+    current_height:
+      default_range: 5m
+      overrides:
+        # 'chain_id': time_override
+        '0021': 4m
+        '0009': 3m
     contactpoints:
       slack:
         enabled: False
