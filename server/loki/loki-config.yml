@@ -1,0 +1,75 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  log_level: "info"
+
+common:
+  storage:
+    s3:
+      endpoint: minio:9000
+      insecure: true
+      bucketnames: loki-data
+      access_key_id: loki
+      secret_access_key: supersecret
+      s3forcepathstyle: true
+
+ingester:
+  lifecycler:
+    join_after: 10s
+    observe_period: 5s
+    ring:
+      replication_factor: 1
+      kvstore:
+        store: inmemory
+    final_sleep: 0s
+  chunk_idle_period: 1m
+  wal:
+    enabled: true
+    dir: /loki/wal
+  chunk_encoding: snappy
+  chunk_target_size: 1.572864e+06
+  chunk_block_size: 262144
+  flush_op_timeout: 10s
+
+schema_config:
+  configs:
+  - from: 2020-08-01
+    store: boltdb-shipper
+    object_store: s3
+    schema: v11
+    index:
+      prefix: index_
+      period: 24h
+
+storage_config:
+  boltdb_shipper:
+    shared_store: s3
+    active_index_directory: /tmp/index
+    cache_location: /tmp/boltdb-cache
+
+querier:
+  max_concurrent: 20
+
+frontend:
+  max_outstanding_per_tenant: 2048
+  compress_responses: true
+
+query_scheduler:
+  max_outstanding_requests_per_tenant: 2048
+  grpc_client_config:
+    max_send_msg_size: 33554432
+    max_recv_msg_size: 33554432
+
+limits_config:
+  ingestion_rate_mb: 10
+  ingestion_burst_size_mb: 50
+  reject_old_samples: false
+  reject_old_samples_max_age: 720h
+  per_stream_rate_limit: 10MB
+  per_stream_rate_limit_burst: 50MB
+  max_query_length: 43800h
+
+compactor:
+  working_directory: /tmp/compactor
+  shared_store: s3

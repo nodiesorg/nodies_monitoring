@@ -8,8 +8,6 @@ chains.json
 /server/.data/
 /server/docker-compose.yml
 /server/prometheus/prometheus.yml
-/server/loki/loki-config.yml
-/server/grafana_provisioning/datasources/*.yaml
 /server/grafana_provisioning/alerting/contactpoint.yaml
 /server/grafana_provisioning/alerting/notificationpolicies.yaml
 /server/grafana_provisioning/alerting/alerting.yaml

@@ -40,21 +40,6 @@ def update_prometheus_config():
                 f"Unexpected prometheus job found in config: {job_dict['job_name']}")
     generate_config(template_dict, 'server/prometheus/prometheus.yml')
 
-
-def update_loki():
-    template_dict = get_template('templates/loki-config.yml')
-    template_dict["server"]["http_listen_port"] = settings["server"]["loki"]["port"]
-    generate_config(template_dict, 'server/loki/loki-config.yml')
-
-
-def update_datasource(datasource: str):
-    template_dict = get_template(f'templates/datasources/{datasource}.yaml')
-    endpoint = settings["server"]["host_ip"]
-    port = settings["server"][datasource]["port"]
-    template_dict["datasources"][0]["url"] = f"http://{endpoint}:{port}"
-    generate_config(template_dict, f"server/grafana_provisioning/datasources/{datasource}.yaml")
-
-
 def update_notification_policies():
     template_dict = get_template('templates/alerting/notificationpolicies.yaml')
     generate_config(template_dict, 'server/grafana_provisioning/alerting/notificationpolicies.yaml')
@@ -132,17 +117,12 @@ def update_promtail():
     domain = f"http://{settings['clients']['promtail']['loki_endpoint']}"
     loki_port = settings['clients']['promtail']['loki_port']
     full_url = f"{domain}:{loki_port}/loki/api/v1/push"
-    promtail_port = settings["clients"]["promtail"]["port"]
-
     template_dict["clients"][0]["url"] = full_url
-    template_dict["server"]["http_listen_port"] = int(promtail_port)
     generate_config(template_dict, 'clients/promtail/promtail-config.yml')
 
 
 def update_bcexporter():
-    blockchain_exporter_port = settings["clients"]["blockchain_exporter"]["port"]
     template_dict = get_template('templates/clients/config.yml')
-    template_dict["exporter_port"] = blockchain_exporter_port
     if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
         template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias_name"]
     else:
@@ -190,9 +170,6 @@ def main():
 
     # server
     update_prometheus_config()
-    update_loki()
-    update_datasource("loki")
-    update_datasource("prometheus")
     update_alerting()
     update_alerting_contactpoint()
     update_server_docker_compose()
