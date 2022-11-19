@@ -6,7 +6,7 @@ deleteRules:
   # <int> organization ID, default = 1
   - orgId: 1
     # <string, required> unique identifier for the rule
-    uid: stale_chain-Test
+    uid: current_height
 
 # List of rule groups to import or update
 groups:
@@ -22,9 +22,9 @@ groups:
     # <list, required> list of rules that are part of the rule group
     rules:
       # <string, required> unique identifier for the rule
-      - uid: stale_chain
+      - uid: current_height
         # <string, required> title of the rule that will be displayed in the UI
-        title: stale_chain
+        title: current_height
         rule_group: chain
         # <string, required> which query should be used for the condition
         condition: E
@@ -38,7 +38,7 @@ groups:
             datasourceUid: 'my_prometheus_uid'
             model:
               editorMode: code
-              expr: "max by(endpoint) (max_over_time(current_height{job=\"blockchain\"}[$__interval]))"
+              expr: "max by(endpoint) (max_over_time(current_height{blockchain_id=\"XXXX\"}[$__interval]))"
               legendFormat: "{{endpoint}}"
               intervalMs: 1000
               maxDataPoints: 43200
@@ -81,7 +81,7 @@ groups:
             datasourceUid: 'my_prometheus_uid'
             model:
               editorMode: code
-              expr: "min by(endpoint) (min_over_time(current_height{job=\"blockchain\"}[$__interval]))"
+              expr: "min by(endpoint) (min_over_time(current_height{blockchain_id=\"XXXX\"}[$__interval]))"
               legendFormat: "{{endpoint}}"
               intervalMs: 1000
               maxDataPoints: 43200
@@ -114,7 +114,7 @@ groups:
               expression: C
               intervalMs: 1000
               maxDataPoints: 43200
-              reducer: last
+              reducer: min
               refId: D
               type: reduce
           - refId: E
