@@ -17,5 +17,7 @@ chains.json
 /clients/bcexporter/config/config.yml
 /clients/log/*.log
 
+/settings.yml
+
 notes.md
 dev.gitignore

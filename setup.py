@@ -2,25 +2,23 @@ import argparse
 import copy
 import json
 import os
+import shutil
 import stat
+import sys
 from pathlib import Path
 
 import yaml
 
 
-def load_yaml(template_path: str) -> dict:
-    with open(Path(template_path), 'r') as f:
+def load_yaml(yaml_path: str) -> dict:
+    with open(Path(yaml_path), 'r') as f:
         template_dict = yaml.safe_load(f)
     return template_dict
 
 
-def load_json(chain_path: str) -> list:
-    with open(Path(chain_path), "r") as stream:
+def load_json(json_path: str) -> list:
+    with open(Path(json_path), "r") as stream:
         return json.load(stream)
-
-
-def get_settings():
-    return load_yaml("settings.yml")
 
 
 def generate_config(completed_template: dict, output_path: str):
@@ -28,7 +26,23 @@ def generate_config(completed_template: dict, output_path: str):
         yaml.dump(completed_template, f)
 
 
-settings = get_settings()
+def check_settings():
+    def copy_settings():
+        shutil.copy('templates/settings.yml', './settings.yml.new')
+        sys.exit('Please update values in ./settings.yml.new and rename to ./settings.yml')
+
+    if Path('./settings.yml').exists():
+        current_version = load_yaml('./settings.yml')['version']
+        template_version = load_yaml('templates/settings.yml')['version']
+        if template_version > current_version:
+            os.rename('./settings.yml', './settings.yml.old')
+            copy_settings()
+    else:
+        copy_settings()
+
+
+check_settings()
+settings = load_yaml('settings.yml')
 
 
 def update_prometheus_config():
@@ -47,6 +61,7 @@ def update_prometheus_config():
             print(
                 f"Unexpected prometheus job found in config: {job_dict['job_name']}")
     generate_config(template_dict, 'server/prometheus/prometheus.yml')
+
 
 def update_notification_policies():
     template_dict = load_yaml('templates/alerting/notificationpolicies.yaml')
