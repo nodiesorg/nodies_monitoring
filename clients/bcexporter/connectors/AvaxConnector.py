@@ -1,8 +1,6 @@
 import asyncio
-import json
 import urllib.parse
 
-import aiohttp
 from appmetrics.AppMetrics import AppMetrics
 from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
@@ -20,13 +18,13 @@ class AvaxConnector(EthConnector):
     q2aTwKuyzgs8pynF7UXBZCU7DejbZbZ6EUyHr3JQzYgwNPUPi
     """
 
-    def __init__(self, chain_url_obj: ChainUrl, destination: AppMetrics, id: str, chain: str, request_kwargs=None):
+    def __init__(self, chain_url_obj: ChainUrl, destination: AppMetrics, id: str, chain: str, client_session, request_kwargs=None):
         self.chain_url_obj = chain_url_obj
         self.fqd = ChainUrl(urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), f"/ext/bc/{chain}/rpc"))
         super().__init__(self.fqd, destination, id, request_kwargs)
         self.chain = chain
         self._set_labels()
-        self.http_client = HttpClient()
+        self.http_client = HttpClient(client_session)
 
     def _set_labels(self):
         """
