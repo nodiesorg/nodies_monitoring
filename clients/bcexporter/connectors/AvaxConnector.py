@@ -3,10 +3,10 @@ import json
 import urllib.parse
 
 import aiohttp
-
 from appmetrics.AppMetrics import AppMetrics
 from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
+from connectors.HttpClient import HttpClient
 from data.AvaxChainID import AvaxChainID
 from data.ChainSyncStatus import ChainSyncStatus
 from data.PoktChainID import PoktChainID
@@ -26,6 +26,7 @@ class AvaxConnector(EthConnector):
         super().__init__(self.fqd, destination, id, request_kwargs)
         self.chain = chain
         self._set_labels()
+        http_client = HttpClient()
 
     def _set_labels(self):
         """
@@ -76,53 +77,36 @@ class AvaxConnector(EthConnector):
         if not self.chain == "P":
             return await super().get_current_block()
 
-        async with aiohttp.ClientSession() as async_session:
-            endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/bc/P")
-            response = await async_session.post(
-                url=endpoint,
-                json={
+        endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/bc/P")
+        payload = {
                     "jsonrpc": "2.0",
                     "method": "platform.getHeight",
                     "params": {},
                     "id": 1
-                },
-                headers={"content-type": "application/json"}
-            )
-            json_object = json.loads((await response.content.read()).decode("utf8"))
-            return int(json_object["result"]["height"])
+                }
+        response = self.http_client.post(endpoint, payload)
+        return int(response["result"]["height"])
 
     async def is_bootstrapped(self) -> bool:
         endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/info")
-        async with aiohttp.ClientSession() as async_session:
-            response = await async_session.post(
-                timeout=5,
-                url=endpoint,
-                json={
+        payload = {
                     "jsonrpc": "2.0",
                     "id": 1,
                     "method": "info.isBootstrapped",
                     "params": {
                         "chain": self.chain
                     }
-                },
-                headers={"content-type": "application/json"}
-            )
-            json_object = json.loads((await response.content.read()).decode("utf8"))
-            return json_object["result"]["isBootstrapped"]
+                }
+        response = self.http_client.post(endpoint, payload)
+        return response["result"]["isBootstrapped"]
 
     async def get_outstanding_blocks(self):
         endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), "/ext/health")
-        async with aiohttp.ClientSession() as async_session:
-            response = await async_session.post(
-                url=endpoint,
-                json={
+        payload = {
                     "jsonrpc": "2.0",
                     "id": 1,
                     "method": "health.health"
-                },
-                headers={"content-type": "application/json"}
-            )
-            json_object = json.loads((await response.content.read()).decode("utf8"))
-            response_json = json_object["result"]["checks"][self.chain]["message"]["consensus"][
+                }
+        response = self.http_client.post(endpoint, payload)
+        return response["result"]["checks"][self.chain]["message"]["consensus"][
                 "outstandingBlocks"]
-            return response_json

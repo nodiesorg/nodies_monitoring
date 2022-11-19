@@ -1,0 +1,18 @@
+import aiohttp
+import json
+
+class HttpClient():
+
+    def __init__(self):
+        self.client_session = aiohttp.ClientSession()
+
+    async def post(self, endpoint, payload, headers={"content-type": "application/json"}, timeout=5):
+        async with self.aiohttp.ClientSession() as async_session:
+            response = await async_session.post(
+                timeout=5,
+                url=endpoint,
+                json=payload,
+                headers=headers
+            )
+            json_object = json.loads((await response.content.read()).decode("utf8"))
+            return json_object
