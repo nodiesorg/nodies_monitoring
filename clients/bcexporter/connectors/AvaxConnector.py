@@ -26,7 +26,7 @@ class AvaxConnector(EthConnector):
         super().__init__(self.fqd, destination, id, request_kwargs)
         self.chain = chain
         self._set_labels()
-        http_client = HttpClient()
+        self.http_client = HttpClient()
 
     def _set_labels(self):
         """
