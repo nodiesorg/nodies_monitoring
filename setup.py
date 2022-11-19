@@ -8,19 +8,19 @@ from pathlib import Path
 import yaml
 
 
-def get_template(template_path: str) -> dict:
+def load_yaml(template_path: str) -> dict:
     with open(Path(template_path), 'r') as f:
         template_dict = yaml.safe_load(f)
     return template_dict
 
 
-def get_chains(chain_path: str) -> list:
+def load_json(chain_path: str) -> list:
     with open(Path(chain_path), "r") as stream:
         return json.load(stream)
 
 
 def get_settings():
-    return get_template("settings.yml")
+    return load_yaml("settings.yml")
 
 
 def generate_config(completed_template: dict, output_path: str):
@@ -32,7 +32,7 @@ settings = get_settings()
 
 
 def update_prometheus_config():
-    template_dict = get_template('templates/prometheus.yml')
+    template_dict = load_yaml('templates/prometheus.yml')
     for job_dict in template_dict["scrape_configs"]:
         if job_dict["job_name"] == "node":
             targets = settings["server"]["prometheus"]["exporter_endpoints"]["node"]
@@ -49,7 +49,7 @@ def update_prometheus_config():
     generate_config(template_dict, 'server/prometheus/prometheus.yml')
 
 def update_notification_policies():
-    template_dict = get_template('templates/alerting/notificationpolicies.yaml')
+    template_dict = load_yaml('templates/alerting/notificationpolicies.yaml')
     generate_config(template_dict, 'server/grafana_provisioning/alerting/notificationpolicies.yaml')
 
 
@@ -59,8 +59,8 @@ def convert_to_seconds(time_string: str) -> int:
 
 
 def update_alerting():
-    template_dict = get_template('templates/alerting/alerting.yaml')
-    chains_list = get_chains('clients/bcexporter/config/chains.json')
+    template_dict = load_yaml('templates/alerting/alerting.yaml')
+    chains_list = load_json('clients/bcexporter/config/chains.json')
     default_range = settings["server"]["alerts"]["current_height"]["default_range"]
     overrides = settings["server"]["alerts"]["current_height"]["overrides"]
     overrides_list = []
@@ -89,7 +89,7 @@ def map_contactpoint_parameter(receiver_idx: int, alert_name: str, alert_dict: d
 
 
 def update_alerting_contactpoint():
-    template_dict = get_template('templates/alerting/contactpoint.yaml')
+    template_dict = load_yaml('templates/alerting/contactpoint.yaml')
     valid_args = ["slack", "discord", "teams", "email", "webhook"]
     for alert_name, alert_dict in settings["server"]["alerts"]["contactpoints"].items():
         if alert_name not in valid_args:
@@ -107,7 +107,7 @@ def update_alerting_contactpoint():
 
 
 def update_server_docker_compose():
-    template_dict = get_template('templates/docker-compose.yml')
+    template_dict = load_yaml('templates/docker-compose.yml')
     services = ["loki", "minio", "grafana", "prometheus"]
     for service in services:
         port_str = settings["server"][service]["port"]
@@ -134,7 +134,7 @@ def update_permissions_recursively(dir_path: str, user_id: int, perms: int):
 
 # client update methods
 def update_promtail():
-    template_dict = get_template("templates/clients/promtail-config.yml")
+    template_dict = load_yaml("templates/clients/promtail-config.yml")
     domain = f"http://{settings['clients']['promtail']['loki_endpoint']}"
     loki_port = settings['clients']['promtail']['loki_port']
     full_url = f"{domain}:{loki_port}/loki/api/v1/push"
@@ -143,7 +143,7 @@ def update_promtail():
 
 
 def update_bcexporter():
-    template_dict = get_template('templates/clients/config.yml')
+    template_dict = load_yaml('templates/clients/config.yml')
     if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
         template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias_name"]
     else:
@@ -166,7 +166,7 @@ def get_args() -> argparse.Namespace:
 
 
 def update_clients_docker_compose():
-    template_dict = get_template('templates/clients/docker-compose.yml')
+    template_dict = load_yaml('templates/clients/docker-compose.yml')
     arg_clients = get_args().clients
     for service_name, service_dict in template_dict["services"].copy().items():
         if service_name in arg_clients:
