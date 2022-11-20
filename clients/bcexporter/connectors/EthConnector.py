@@ -32,7 +32,7 @@ class EthConnector(Web3Connector):
                 asyncio.ensure_future(self.get_current_block())
             ]
             curr_height, *_ = await asyncio.gather(*tasks)
-            sync_dict["status"] = ChainSyncStatus.SYNCaED
+            sync_dict["status"] = ChainSyncStatus.SYNCED
             sync_dict["current_block"] = curr_height
             sync_dict["latest_block"] = curr_height
         else:
