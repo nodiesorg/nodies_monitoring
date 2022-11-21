@@ -17,7 +17,7 @@ def create_connectors(appmetrics: AppMetrics, chains) -> list:
         if chain["id"] == PoktChainID.POKT:
             connectors.append(TendermintConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"]))
 
-        if chain["id"] == PoktChainID.SWIMMER:
+        elif chain["id"] == PoktChainID.SWIMMER:
             connectors.append(AvaxConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"],
                                             chain=AvaxChainID.SWIMMER))
 
