@@ -2,11 +2,10 @@ from appmetrics.AppMetrics import AppMetrics
 from connectors.AvaxConnector import AvaxConnector
 from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
+from connectors.TendermintConnector import TendermintConnector
 from data.AvaxChainID import AvaxChainID
 from data.PoktChainID import PoktChainID
 from config.Config import Config
-
-from clients.bcexporter.connectors.TendermintConnector import TendermintConnector
 
 
 def create_connectors(appmetrics: AppMetrics, chains) -> list:
