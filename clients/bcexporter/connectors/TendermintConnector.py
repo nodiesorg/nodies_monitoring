@@ -1,5 +1,10 @@
 import asyncio
+import json
 import traceback
+import urllib.parse
+
+import aiohttp
+
 from appmetrics.AppMetrics import AppMetrics
 from connectors.ChainUrl import ChainUrl
 from data.ChainSyncStatus import ChainSyncStatus
@@ -15,11 +20,20 @@ class TendermintConnector(Web3Connector):
 
     async def get_sync_data(self) -> dict:
         # Returns dict if currently syncing, otherwise returns False
-        # TODO: Call Tendermint status endpoint, return sync_info["latest_block_height"] as current and latest block
-        # TODO: is syncing = sync_info["catching_up"] (AKA when consensus reactor is firing)
-        # TODO: do we even need get_current_block / get_latest_block impl? Or cache it. Otherwise we call /status endpoint twice.
-        sync_dict = {}
-        return sync_dict
+        async with aiohttp.ClientSession() as async_session:
+            endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), '/status')
+            response = await async_session.post(
+                url=endpoint,
+                headers={"content-type": "application/json"}
+            )
+            json_object = json.loads((await response.content.read()).decode("utf8"))
+            sync_info = json_object["result"]["sync_info"]
+            sync_dict = {
+                "current_block": sync_info["latest_block_height"],
+                "latest_block": sync_info["latest_block_height"],
+                "status": ChainSyncStatus.SYNCING if sync_info["catching_up"] else ChainSyncStatus.SYNCED
+            }
+            return sync_dict
 
     async def get_current_block(self) -> int:
         return -1
