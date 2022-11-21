@@ -7,6 +7,7 @@ import aiohttp
 
 from appmetrics.AppMetrics import AppMetrics
 from connectors.ChainUrl import ChainUrl
+from connectors.Web3Connector import Web3Connector
 from data.ChainSyncStatus import ChainSyncStatus
 
 
