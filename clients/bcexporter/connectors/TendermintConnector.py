@@ -23,10 +23,7 @@ class TendermintConnector(Web3Connector):
         # Returns dict if currently syncing, otherwise returns False
         async with aiohttp.ClientSession() as async_session:
             endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), '/status')
-            response = await async_session.get(
-                url=endpoint,
-                headers={"content-type": "application/json"}
-            )
+            response = await async_session.get(url=endpoint)
             json_object = json.loads((await response.content.read()).decode("utf8"))
             sync_info = json_object["result"]["sync_info"]
             sync_dict = {
