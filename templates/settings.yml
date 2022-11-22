@@ -1,3 +1,5 @@
+version: 2
+
 clients:
   node_exporter:
     port: 9100
@@ -34,8 +36,8 @@ server:
       default_range: 5m
       overrides:
         # 'chain_id': time_override
-        '0021': 4m
-        '0009': 3m
+        '0021': 5m
+        '0009': 5m
     contactpoints:
       slack:
         enabled: False
