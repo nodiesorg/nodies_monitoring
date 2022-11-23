@@ -11,12 +11,12 @@ clients:
     loki_port: 3100
     log_root_path: ./log
   blockchain_exporter:
+    host_networking_enabled: True
     port: 9877
     alias_enabled: True
     alias_name: LOCALHOST
 
 server:
-  host_ip: 111.222.333.001
   loki:
     port: 3100
   prometheus:

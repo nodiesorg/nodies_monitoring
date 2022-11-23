@@ -121,13 +121,22 @@ def update_alerting_contactpoint():
     generate_config(template_dict, 'server/grafana_provisioning/alerting/contactpoint.yaml')
 
 
+def update_docker_service_network_ports(stack: str, service_name: str, template_dict: dict):
+    try:
+        if settings[stack][service_name]["host_networking_enabled"]:
+            template_dict["services"][service_name]["network_mode"] = "host"
+            del template_dict["services"][service_name]['networks']
+            del template_dict["services"][service_name]['ports']
+    except KeyError:
+        port_str = settings[stack][service_name]["port"]
+        default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
+        template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
+
+
 def update_server_docker_compose():
     template_dict = load_yaml('templates/docker-compose.yml')
-    services = ["loki", "minio", "grafana", "prometheus"]
-    for service in services:
-        port_str = settings["server"][service]["port"]
-        default_port_str = (template_dict["services"][service]['ports'][0]).split(':')[0]
-        template_dict["services"][service]['ports'] = [f"{port_str}:{default_port_str}"]
+    for service_name in template_dict["services"].copy().keys():
+        update_docker_service_network_ports('server', service_name, template_dict)
     generate_config(template_dict, "server/docker-compose.yml")
 
 
@@ -183,11 +192,9 @@ def get_args() -> argparse.Namespace:
 def update_clients_docker_compose():
     template_dict = load_yaml('templates/clients/docker-compose.yml')
     arg_clients = get_args().clients
-    for service_name, service_dict in template_dict["services"].copy().items():
+    for service_name in template_dict["services"].copy().keys():
         if service_name in arg_clients:
-            port_str = settings["clients"][service_name]["port"]
-            default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
-            template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
+            update_docker_service_network_ports('clients', service_name, template_dict)
             if service_name == 'promtail':
                 promtail_log_root_path = settings["clients"]["promtail"]["log_root_path"]
                 for idx, promtail_volume in enumerate(template_dict["services"][service_name]["volumes"]):
