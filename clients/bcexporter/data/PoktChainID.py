@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class PoktChainID(str, Enum):
+    POKT = "0001"
     DFK = "03DF"
     SWIMMER = "03CB"
     AVAX = "0003"

@@ -2,10 +2,10 @@ from appmetrics.AppMetrics import AppMetrics
 from connectors.AvaxConnector import AvaxConnector
 from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
+from connectors.TendermintConnector import TendermintConnector
 from data.AvaxChainID import AvaxChainID
 from data.PoktChainID import PoktChainID
 from config.Config import Config
-
 
 
 def create_connectors(appmetrics: AppMetrics, chains) -> list:
@@ -13,7 +13,11 @@ def create_connectors(appmetrics: AppMetrics, chains) -> list:
     alias = Config().alias
     for chain in chains:
         chain_url_obj = ChainUrl(chain["url"], alias)
-        if chain["id"] == PoktChainID.SWIMMER:
+
+        if chain["id"] == PoktChainID.POKT:
+            connectors.append(TendermintConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"]))
+
+        elif chain["id"] == PoktChainID.SWIMMER:
             connectors.append(AvaxConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"],
                                             chain=AvaxChainID.SWIMMER))
 
