@@ -11,7 +11,7 @@ clients:
     loki_port: 3100
     log_root_path: ./log
   blockchain_exporter:
-    host_networking_enabled: True
+    host_networking_enabled: False
     port: 9877
     alias_enabled: True
     alias_name: LOCALHOST
@@ -36,8 +36,7 @@ server:
       default_range: 5m
       overrides:
         # 'chain_id': time_override
-        '0021': 5m
-        '0009': 5m
+        # '0021': 5m
     contactpoints:
       slack:
         enabled: False
