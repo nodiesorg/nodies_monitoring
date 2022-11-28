@@ -29,7 +29,7 @@ def generate_config(completed_template: dict, output_path: str):
 def check_settings():
     def copy_settings():
         shutil.copy('templates/settings.yml', './settings.yml.new')
-        sys.exit('Please update values in ./settings.yml.new and rename to ./settings.yml')
+        sys.exit('Please update values in ./settings.yml.new and rename to ./settings.yml, then run setup.py again.')
 
     if Path('./settings.yml').exists():
         current_version = load_yaml('./settings.yml')['version']
@@ -80,7 +80,10 @@ def update_alerting():
     overrides = settings["server"]["alerts"]["current_height"]["overrides"]
     overrides_list = []
     for chain in chains_list:
-        curr_range = overrides.get(f'{chain["id"]}', default_range)
+        try:
+            curr_range = overrides.get(f'{chain["id"]}', default_range)
+        except AttributeError:
+            curr_range = default_range
         temp_curr_height_alert_dict = copy.deepcopy(template_dict["groups"][0]["rules"][0])
         curr_range_in_secs = convert_to_seconds(curr_range)
         temp_curr_height_alert_dict["uid"] = f'{temp_curr_height_alert_dict["uid"]}_{chain["id"]}'
@@ -122,15 +125,21 @@ def update_alerting_contactpoint():
 
 
 def update_docker_service_network_ports(stack: str, service_name: str, template_dict: dict):
+    updated = False
     try:
-        if settings[stack][service_name]["host_networking_enabled"]:
+        if settings[stack][service_name]["host_networking_enabled"] and service_name == 'blockchain_exporter':
+            updated = True
             template_dict["services"][service_name]["network_mode"] = "host"
             del template_dict["services"][service_name]['networks']
             del template_dict["services"][service_name]['ports']
     except KeyError:
-        port_str = settings[stack][service_name]["port"]
-        default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
-        template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
+        pass
+    finally:
+        if not updated:
+            port_str = settings[stack][service_name]["port"]
+            default_port_str = (template_dict["services"][service_name]['ports'][0]).split(':')[0]
+            template_dict["services"][service_name]["ports"] = [f"{port_str}:{default_port_str}"]
+
 
 
 def update_server_docker_compose():
@@ -168,10 +177,13 @@ def update_promtail():
 
 def update_bcexporter():
     template_dict = load_yaml('templates/clients/config.yml')
-    if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
-        template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias_name"]
+    if settings["clients"]["blockchain_exporter"]["alias"]["enabled"]:
+        template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias"]["name"]
     else:
         template_dict["alias"] = ""
+    if settings["clients"]["blockchain_exporter"]["host_networking"]["enabled"]:
+        template_dict["exporter_port"] = settings["clients"]["blockchain_exporter"]["host_networking"]["internal_port"]
+    template_dict["polling_interval_seconds"] = settings["clients"]["blockchain_exporter"]["polling_interval_seconds"]
     generate_config(template_dict, 'clients/bcexporter/config/config.yml')
 
 
