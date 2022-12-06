@@ -29,7 +29,7 @@ def generate_config(completed_template: dict, output_path: str):
 def check_settings():
     def copy_settings():
         shutil.copy('templates/settings.yml', './settings.yml.new')
-        sys.exit('Please update values in ./settings.yml.new and rename to ./settings.yml')
+        sys.exit('Please update values in ./settings.yml.new and rename to ./settings.yml, then run setup.py again.')
 
     if Path('./settings.yml').exists():
         current_version = load_yaml('./settings.yml')['version']
@@ -177,10 +177,13 @@ def update_promtail():
 
 def update_bcexporter():
     template_dict = load_yaml('templates/clients/config.yml')
-    if settings["clients"]["blockchain_exporter"]["alias_enabled"]:
-        template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias_name"]
+    if settings["clients"]["blockchain_exporter"]["alias"]["enabled"]:
+        template_dict["alias"] = settings["clients"]["blockchain_exporter"]["alias"]["name"]
     else:
         template_dict["alias"] = ""
+    if settings["clients"]["blockchain_exporter"]["host_networking"]["enabled"]:
+        template_dict["exporter_port"] = settings["clients"]["blockchain_exporter"]["host_networking"]["internal_port"]
+    template_dict["polling_interval_seconds"] = settings["clients"]["blockchain_exporter"]["polling_interval_seconds"]
     generate_config(template_dict, 'clients/bcexporter/config/config.yml')
 
 

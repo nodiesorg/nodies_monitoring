@@ -1,4 +1,4 @@
-version: 2
+version: 3
 
 clients:
   node_exporter:
@@ -11,10 +11,14 @@ clients:
     loki_port: 3100
     log_root_path: ./log
   blockchain_exporter:
-    host_networking_enabled: False
+    host_networking:
+      enabled: True
+      internal_port: 9877
     port: 9877
-    alias_enabled: True
-    alias_name: LOCALHOST
+    alias:
+      enabled: True
+      name: LOCALHOST
+    polling_interval_seconds: 5
 
 server:
   loki:
