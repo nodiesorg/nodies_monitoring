@@ -13,7 +13,7 @@ contactPoints:
   # <int> organization ID, default = 1
   - orgId: 1
     # <string, required> name of the contact point
-    name: grafana-default-slack
+    name: grafana-default
     receivers:
       # <string, required> unique identifier for the receiver
       - uid: grafana-default-slack
@@ -22,5 +22,34 @@ contactPoints:
         # <object, required> settings for the specific receiver type
         settings:
           url: http://test:9000
-          text: "{{ template \"slack\" . }}"
           title: "{{ if eq .Status \"firing\" }}:fire:{{ else }}:white_check_mark:{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}"
+          text: "{{ template \"slack\" . }}"
+      - uid: grafana-default-discord
+        type: discord
+        settings:
+          url: https://discord.com/api/webhooks/your_uuid/your_other_uuid
+          use_discord_name: Grafana
+          message: "{{ template \"slack\" . }}"
+      - uid: grafana-default-teams
+        type: teams
+        settings:
+          url: https://ms_teams_url
+          title: "{{ if eq .Status \"firing\" }}:fire:{{ else }}:white_check_mark:{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}"
+          message: "{{ template \"slack\" . }}"
+      - uid: grafana-default-email
+        type: email
+        settings:
+          addresses: me@example.com;you@example.com
+          singleEmail: false
+          subject: "{{ if eq .Status \"firing\" }}:fire:{{ else }}:white_check_mark:{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}"
+          message: "{{ template \"slack\" . }}"
+      - uid: grafana-default-webhook
+        type: webhook
+        settings:
+          url: https://endpoint_url
+          httpMethod: POST # <string> options: POST, PUT
+          username: abc
+          password: abc123
+          authorization_scheme: Bearer
+          authorization_credentials: abc123
+          maxAlerts: '10'

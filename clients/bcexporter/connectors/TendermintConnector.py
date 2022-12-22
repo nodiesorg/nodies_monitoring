@@ -1,9 +1,9 @@
 import asyncio
+import json
 import traceback
+import urllib.parse
 
-from web3 import Web3, AsyncHTTPProvider
-from web3.eth import AsyncEth
-from web3.middleware import async_geth_poa_middleware
+import aiohttp
 
 from appmetrics.AppMetrics import AppMetrics
 from connectors.ChainUrl import ChainUrl
@@ -11,39 +11,30 @@ from connectors.Web3Connector import Web3Connector
 from data.ChainSyncStatus import ChainSyncStatus
 
 
-class EthConnector(Web3Connector):
+class TendermintConnector(Web3Connector):
 
     def __init__(self, chain_url_obj: ChainUrl, destination: AppMetrics, id: str, request_kwargs=None):
         self.id = id
         self.chain_url_obj = chain_url_obj
         self.labels = [id, str(chain_url_obj)]
-        self.w3 = Web3(AsyncHTTPProvider(chain_url_obj.get_endpoint(), request_kwargs)
-                       , modules={'eth': AsyncEth}
-                       , middlewares=[async_geth_poa_middleware])
         self.destination = destination
 
     async def get_sync_data(self) -> dict:
         # Returns dict if currently syncing, otherwise returns False
-        sync_data = await self.w3.eth.syncing
-        sync_dict = {}
-        # If not currently syncing
-        if not sync_data:
-            tasks = [
-                asyncio.ensure_future(self.get_current_block())
-            ]
-            curr_height, *_ = await asyncio.gather(*tasks)
-            sync_dict["status"] = ChainSyncStatus.SYNCED
-            sync_dict["current_block"] = curr_height
-            sync_dict["latest_block"] = curr_height
-        else:
-            sync_dict["status"] = ChainSyncStatus.SYNCING
-            sync_dict["current_block"] = sync_data.get("currentBlock", 0)
-            sync_dict["latest_block"] = sync_data.get("highestBlock", 0)
-
-        return sync_dict
+        async with aiohttp.ClientSession() as async_session:
+            endpoint = urllib.parse.urljoin(self.chain_url_obj.get_endpoint(), '/status')
+            response = await async_session.get(url=endpoint)
+            json_object = json.loads((await response.content.read()).decode("utf8"))
+            sync_info = json_object["result"]["sync_info"]
+            sync_dict = {
+                "current_block": sync_info["latest_block_height"],
+                "latest_block": sync_info["latest_block_height"],
+                "status": ChainSyncStatus.SYNCING if sync_info["catching_up"] else ChainSyncStatus.SYNCED
+            }
+            return sync_dict
 
     async def get_current_block(self) -> int:
-        return await self.w3.eth.get_block_number()
+        return -1
 
     async def get_latest_block(self) -> int:
         """

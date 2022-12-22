@@ -1,0 +1,65 @@
+version: 3
+
+clients:
+  node_exporter:
+    port: 9100
+  cadvisor:
+    port: 8080
+  promtail:
+    port: 9080
+    loki_endpoint: 111.222.333.001
+    loki_port: 3100
+    log_root_path: ./log
+  blockchain_exporter:
+    host_networking:
+      enabled: True
+      internal_port: 9877
+    port: 9877
+    alias:
+      enabled: True
+      name: LOCALHOST
+    polling_interval_seconds: 5
+
+server:
+  loki:
+    port: 3100
+  prometheus:
+    port: 9090
+    exporter_endpoints:
+      cadvisor: ["111.222.333.002:8080"]
+      blockchain: ["111.222.333.002:9877"]
+      node: ["111.222.333.002:9100"]
+  grafana:
+    port: 3000
+  minio:
+    port: 9000
+  promtail:
+    port: 9080
+  alerts:
+    current_height:
+      default_range: 5m
+      overrides:
+        # 'chain_id': time_override
+        # '0021': 5m
+    contactpoints:
+      slack:
+        enabled: False
+        url: https://hooks.slack.com/services/your_slack_webhook_string
+      discord:
+        enabled: False
+        url: https://discord.com/api/webhooks/your_uuid/your_other_uuid
+      teams:
+        enabled: False
+        url: https://ms_teams_url
+      email:
+        enabled: False
+        addresses: ["me@example.com", "you@example.com"]
+      webhook:
+        enabled: False
+        url: https://endpoint_url
+        httpMethod: POST # <string> options: POST, PUT
+        username: my_username
+        password: my_password
+        authorization_scheme: my_bearer
+        authorization_credentials: my_credentials
+        maxAlerts: '10'
