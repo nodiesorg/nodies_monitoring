@@ -93,15 +93,16 @@ pip3 install -r requirements.txt
 
 ## Getting Started
 
-### Settings (REQUIRED)
+### Configuration Setup (REQUIRED)
 
 **NOTE:** This step is required on both the server and the client stack. When setting up this stack, you should follow the principles of least privilege when allowing users to access your exposed ports by setting up network or host based firewalls.
 
-1. Run [settings](settings.yml) to generate a template settings.yml file.
+1. Run `sudo python3 setup.py` to generate a template `settings.yml.new` file.
 2. Update `clients.promtail.loki_endpoint` with the ip address of the host that will run the [monitoring stack](./server) (loki, grafana, minio, prometheus, alertmanager)
 3. Update `server.prometheus.exporter_endpoint` with the endpoints any services of the [exporter_stack](./clients) (blockchain_exporter, cadvisor, node_exporter, promtail)
 4. Update `server.alerts.contactpoints` with the contact points of your alert recievers to send grafana-managed alerts to.
 5. Update `clients.promtail.log_root_path` with the root path of your nginx logs.
+6. Rename `settings.yml.new` to `settings.yml`
 
 ---
 
@@ -109,7 +110,7 @@ pip3 install -r requirements.txt
 
 On your monitoring server:
 
-1. Run [setup.py](setup.py)
+1. Run [setup.py](setup.py) again to save your configurations and set folder permissions.
 ```bash
 sudo python3 setup.py
 ```
@@ -154,7 +155,7 @@ On your exporter server:
     '}';
 ```
 
-3. Run [setup.py](setup.py)
+3. Run [setup.py](setup.py) again to save your configurations and set folder permissions.
 ```bash
 sudo python3 setup.py
 ```
