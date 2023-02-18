@@ -12,11 +12,11 @@ clients:
     log_root_path: ./log
   blockchain_exporter:
     host_networking:
-      enabled: True
+      enabled: False
       internal_port: 9877
     port: 9877
     alias:
-      enabled: True
+      enabled: False
       name: LOCALHOST
     polling_interval_seconds: 5
 
