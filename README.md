@@ -135,6 +135,7 @@ On your exporter server:
 ```
     log_format json_combined escape=json
     '{'
+        '"region":"us-east-1",'
         '"time_local":"$time_local",'
         '"request":"$scheme://$host$request_uri",'
         '"method":"$request_method",'
@@ -154,6 +155,7 @@ On your exporter server:
         '"request_time":"$request_time"'
     '}';
 ```
+Note: Replace the `region` value with a unique region identifer, i.e `us-east-1`, `eu-central-1`, etc based off where your nginx server is located.
 
 3. Run [setup.py](setup.py) again to save your configurations and set folder permissions.
 ```bash
