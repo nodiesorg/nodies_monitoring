@@ -2,6 +2,7 @@ from appmetrics.AppMetrics import AppMetrics
 from connectors.AvaxConnector import AvaxConnector
 from connectors.ChainUrl import ChainUrl
 from connectors.EthConnector import EthConnector
+from connectors.StarknetConnector import StarknetConnector
 from connectors.TendermintConnector import TendermintConnector
 from connectors.NearConnector import NearConnector
 from data.AvaxChainID import AvaxChainID
@@ -33,6 +34,11 @@ def create_connectors(appmetrics: AppMetrics, chains) -> list:
 
         elif chain["id"] == PoktChainID.NEAR:
             connectors.append(NearConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"]))
+
+        elif chain["id"] == PoktChainID.STARKNET:
+            connectors.append(StarknetConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"]))
+        elif chain["id"] == PoktChainID.STARKNET_GOERLI:
+            connectors.append(StarknetConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"]))
 
         else:
             connectors.append(EthConnector(chain_url_obj=chain_url_obj, destination=appmetrics, id=chain["id"]))
