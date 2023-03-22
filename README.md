@@ -126,7 +126,7 @@ sudo python3 setup.py
 ```bash
 sudo vi settings.yml.new
 ```
-3. Rename the file `settings.yml.new` to 'settings.yml`
+3. Rename the file `settings.yml.new` to `settings.yml`
 ```bash
 sudo mv settings.yml.new settings.yml
 ```
@@ -143,7 +143,7 @@ sudo python3 setup.py
 cd server && docker compose up -d
 ```
 7. Launch a browser and navigate to `http://<host>:<port> e.g http://192.168.1.2:3000
-   Default username and password for Grafana is `admin:admin`
+    Default username and password for Grafana is `admin:admin`
 **NOTE:** Sudo is required here to set some folder permissions
 
 ----
@@ -191,7 +191,7 @@ sudo python3 setup.py
 ```bash
 sudo vi settings.yml.new
 ```
-5. Rename the file `settings.yml.new` to 'settings.yml`
+5. Rename the file `settings.yml.new` to `settings.yml`
 ```bash
 sudo mv settings.yml.new settings.yml
 ```
