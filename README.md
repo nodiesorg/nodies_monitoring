@@ -206,7 +206,7 @@ sudo python3 setup.py
 6. Modify `clients.promtail.log_root_path` in the `settings.yml` file to reflect your nginx log directory
 7. Change directory into the [clients](./clients) subfolder, and boot up all client services
 ```bash
-cd nodies_monitoring/server && docker compose up -d
+cd clients && docker compose up -d
 ```
 **NOTE:** Sudo is required here to set some folder permissions
 
