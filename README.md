@@ -142,8 +142,10 @@ sudo python3 setup.py
 ```bash
 cd server && docker compose up -d
 ```
-7. Launch a browser and navigate to `http://<host>:<port> e.g http://192.168.1.2:3000
-    Default username and password for Grafana is `admin:admin`
+7. Launch a browser and navigate to `http://<host>:<port>` e.g http://192.168.1.2:3000
+
+Default username and password for Grafana is `admin:admin`
+
 **NOTE:** Sudo is required here to set some folder permissions
 
 ----
