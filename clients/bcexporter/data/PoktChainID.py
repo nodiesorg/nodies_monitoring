@@ -10,3 +10,5 @@ class PoktChainID(str, Enum):
     AVAXP = "0003-P"
     AVAXC = "0003-C"
     AVAXX = "0003-X"
+    STARKNET = "0060"
+    STARKNET_GOERLI = "0061"
