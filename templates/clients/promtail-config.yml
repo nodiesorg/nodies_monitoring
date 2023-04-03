@@ -21,28 +21,100 @@ scrape_configs:
           __path__: /var/log/*.log
     pipeline_stages:
       - match:
-          pipeline_name: 'relay'
+          pipeline_name: relay
           selector: '{job="varlogs"} |~ ".*/v1/client/relay.*"'
           stages:
             - json:
+                drop_malformed: true
                 expressions:
-                  timestamp: time_local
+                  regions: region
+                  request_body: null
                   status: status
-                  region: region
-                  request_body:
-                drop_malformed: true
+                  timestamp: time_local
             - json:
+                drop_malformed: true
                 expressions:
-                  proof:
+                  proof: null
                 source: request_body
-                drop_malformed: true
             - json:
-                expressions:
-                  blockchain:
-                source: proof
                 drop_malformed: true
+                expressions:
+                  chain_id: blockchain
+                  chain_name: blockchain
+                source: proof
+            - template:
+                source: chain_name
+                template: "\
+                {{ if eq (.Value) \"0029\" }}\
+                  {{ Replace .Value \"0029\" \"Algorand\" -1 }}\
+                {{ else if eq (.Value) \"000D\" }}\
+                  {{ Replace .Value \"000D\" \"Algorand Arch\" -1 }}\
+                {{ else if eq (.Value) \"0045\" }}\
+                  {{ Replace .Value \"0045\" \"Algorand Test\" -1 }}\
+                {{ else if eq (.Value) \"0A45\" }}\
+                  {{ Replace .Value \"0A45\" \"Algorand Test Arch.\" -1 }}\
+                {{ else if eq (.Value) \"0003\" }}\
+                  {{ Replace .Value \"0003\" \"Avax\" -1 }}\
+                {{ else if eq (.Value) \"00A3\" }}\
+                  {{ Replace .Value \"00A3\" \"Avax Arch.\" -1 }}\
+                {{ else if eq (.Value) \"0004\" }}\
+                  {{ Replace .Value \"0004\" \"BSC\" -1 }}\
+                {{ else if eq (.Value) \"0010\" }}\
+                  {{ Replace .Value \"0010\" \"BSC Arch.\" -1 }}\
+                {{ else if eq (.Value) \"0021\" }}\
+                  {{ Replace .Value \"0021\" \"ETH\" -1 }}\
+                {{ else if eq (.Value) \"0022\" }}\
+                  {{ Replace .Value \"0022\" \"ETH Arch.\" -1 }}\
+                {{ else if eq (.Value) \"0027\" }}\
+                  {{ Replace .Value \"0027\" \"xDai\" -1 }}\
+                {{ else if eq (.Value) \"0028\" }}\
+                  {{ Replace .Value \"0028\" \"ETH Arch Trace\" -1 }}\
+                {{ else if eq (.Value) \"0026\" }}\
+                  {{ Replace .Value \"0026\" \"ETH Goreli\" -1 }}\
+                {{ else if eq (.Value) \"0024\" }}\
+                  {{ Replace .Value \"0024\" \"ETH Kovan\" -1 }}\
+                {{ else if eq (.Value) \"0025\" }}\
+                  {{ Replace .Value \"0025\" \"ETH Rinkeby\" -1 }}\
+                {{ else if eq (.Value) \"0023\" }}\
+                  {{ Replace .Value \"0023\" \"ETH Ropston\" -1 }}\
+                {{ else if eq (.Value) \"0005\" }}\
+                  {{ Replace .Value \"0005\" \"Fuse\" -1 }}\
+                {{ else if eq (.Value) \"000A\" }}\
+                  {{ Replace .Value \"000A\" \"Fuse Arch.\" -1 }}\
+                {{ else if eq (.Value) \"000C\" }}\
+                  {{ Replace .Value \"000C\" \"xDai Arch.\" -1 }}\
+                {{ else if eq (.Value) \"0040\" }}\
+                  {{ Replace .Value \"0040\" \"ONE\" -1 }}\
+                {{ else if eq (.Value) \"0044\" }}\
+                  {{ Replace .Value \"0044\" \"IoTeX\" -1 }}\
+                {{ else if eq (.Value) \"0046\" }}\
+                  {{ Replace .Value \"0046\" \"Evmos\" -1 }}\
+                {{ else if eq (.Value) \"0049\" }}\
+                  {{ Replace .Value \"0049\" \"Fantom\" -1 }}\
+                {{ else if eq (.Value) \"0050\" }}\
+                  {{ Replace .Value \"0050\" \"Moonbeam\" -1 }}\
+                {{ else if eq (.Value) \"0001\" }}\
+                  {{ Replace .Value \"0001\" \"POKT\" -1 }}\
+                {{ else if eq (.Value) \"0009\" }}\
+                  {{ Replace .Value \"0009\" \"Polygon\" -1 }}\
+                {{ else if eq (.Value) \"000B\" }}\
+                  {{ Replace .Value \"000B\" \"Polygon Arch\" -1 }}\
+                {{ else if eq (.Value) \"0006\" }}\
+                  {{ Replace .Value \"0006\" \"Solana\" -1 }}\
+                {{ else if eq (.Value) \"0058\" }}\
+                  {{ Replace .Value \"0058\" \"Metis\" -1 }}\
+                {{ else if eq (.Value) \"0053\" }}\
+                  {{ Replace .Value \"0053\" \"Optimism\" -1 }}\
+                {{ else if eq (.Value) \"03DF\" }}\
+                  {{ Replace .Value \"03DF\" \"DFK\" -1 }}\
+                {{ else if eq (.Value) \"03CB\" }}\
+                  {{ Replace .Value \"03CB\" \"SWIM\" -1 }}\
+                {{ else }}\
+                  \"Unknown Chain\"
+                {{ end }}"
             - labels:
-                timestamp:
-                status:
-                blockchain:
-                region:
+                chain_id: null
+                chain_name: null
+                regions: null
+                status: null
+                timestamp: null

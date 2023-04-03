@@ -141,7 +141,7 @@ def update_alerting_contactpoint():
 def update_docker_service_network_ports(stack: str, service_name: str, template_dict: dict):
     updated = False
     try:
-        if settings[stack][service_name]["host_networking"]["enabled"] and service_name == 'blockchain_exporter':
+        if settings[stack][service_name]["host_networking"]["enabled"]:
             updated = True
             template_dict["services"][service_name]["network_mode"] = "host"
             del template_dict["services"][service_name]['networks']
