@@ -47,192 +47,198 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['poktnodes:80']
-
+        labels:
+          regions: 'region1'
     metric_relabel_configs:
-      # Create host label for all metrics
+      # Create host label
+      - source_labels: [ __address__ ]
+        regex: "pocketcore_service_relay_count_for_0(.*)|pocketcore_service_avg_relay_time_for_0(.*)"
+        replacement: "${1}"
+        target_label: "host"
+        action: "replace"
+      # Create chain_id label
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0(.*)"
+        regex: "pocketcore_service_relay_count_for_0(.*)|pocketcore_service_avg_relay_time_for_0(.*)"
         replacement: "${1}"
         target_label: "chain_id"
         action: "replace"
-      # Create chain_id label for all pocketcore_service_relay_count metrics
+      # Create chain_name label
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0(.*)"
-        replacement: "${1}"
-        target_label: "chain_id"
-        action: "replace"
-      # Create chain_name label for all metrics
-      - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0(.*)"
+        regex: "pocketcore_service_relay_count_for_0(.*)|pocketcore_service_avg_relay_time_for_0(.*)"
         replacement: "${1}"
         target_label: "chain_name"
         action: "replace"
 
       # Update chain_name for each chain separately
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0029"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0029(.*)"
         replacement: "Algorand"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_000D"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_000D(.*)"
         replacement: "Algorand Arch"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0045"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0045(.*)"
         replacement: "Algorand Test"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0A45"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0A45(.*)"
         replacement: "Algorand Test Arch."
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0003"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0003(.*)"
         replacement: "Avax"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_00A3"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_00A3(.*)"
         replacement: "Avax Arch."
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0004"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0004(.*)"
         replacement: "BSC"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0010"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0010(.*)"
         replacement: "BSC Arch."
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0021"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0021(.*)"
         replacement: "ETH"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0022"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0022(.*)"
         replacement: "ETH Arch."
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0027"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0027(.*)"
         replacement: "xDai"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0028"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0028(.*)"
         replacement: "ETH Arch Trace"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0026"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0026(.*)"
         replacement: "ETH Goreli"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0024"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0024(.*)"
         replacement: "ETH Kovan"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0025"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0025(.*)"
         replacement: "ETH Rinkeby"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0023"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0023(.*)"
         replacement: "ETH Ropston"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0005"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0005(.*)"
         replacement: "Fuse"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_000A"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_000A(.*)"
         replacement: "Fuse Arch."
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_000C"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_000C(.*)"
         replacement: "xDai Arch."
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0040"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0040(.*)"
         replacement: "ONE"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0044"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0044(.*)"
         replacement: "IoTeX"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0046"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0046(.*)"
         replacement: "Evmos"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0049"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0049(.*)"
         replacement: "Fantom"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0050"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0050(.*)"
         replacement: "Moonbeam"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0001"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0001(.*)"
         replacement: "POKT"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0009"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0009(.*)"
         replacement: "Polygon"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_000B"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_000B(.*)"
         replacement: "Polygon Arch"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0006"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0006(.*)"
         replacement: "Solana"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0058"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0058(.*)"
         replacement: "Metis"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0053"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_0053(.*)"
         replacement: "Optimism"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_03DF"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_03DF(.*)"
         replacement: "DFK"
         target_label: "chain_name"
         action: "replace"
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_03CB"
+        regex: "pocketcore_service_(relay_count|avg_relay_time)_for_03CB(.*)"
         replacement: "SWIM"
         target_label: "chain_name"
         action: "replace"
 
       # Update metric name so all chains use the same metric name
       - source_labels: [ __name__ ]
-        regex: "pocketcore_service_relay_count_for_0(.*)"
-        replacement: "pocketcore_service_relay_count"
+        regex: "pocketcore_service_(relay_count)_for_0(.*)"
+        replacement: "pocketcore_service_${1}"
+        target_label: "__name__"
+        action: "replace"
+      - source_labels: [ __name__ ]
+        regex: "pocketcore_service_(avg_relay_time)_for_0(.*)_(sum|count)"
+        replacement: "pocketcore_service_${1}_${3}"
         target_label: "__name__"
         action: "replace"

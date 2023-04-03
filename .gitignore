@@ -16,6 +16,7 @@ chains.json
 /clients/promtail/promtail-config.yml
 /clients/bcexporter/config/config.yml
 /clients/log/*.log
+/clients/log/**/*.log
 
 /settings.yml
 

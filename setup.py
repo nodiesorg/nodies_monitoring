@@ -47,7 +47,7 @@ settings = load_yaml('settings.yml')
 
 def update_prometheus_config():
     template_dict = load_yaml('templates/prometheus.yml')
-    for job_dict in template_dict["scrape_configs"]:
+    for idx, job_dict in enumerate(template_dict["scrape_configs"]):
         if job_dict["job_name"] == "node":
             targets = settings["server"]["prometheus"]["exporter_endpoints"]["node"]
             job_dict["static_configs"][0]["targets"] = targets
@@ -57,6 +57,20 @@ def update_prometheus_config():
         elif job_dict["job_name"] == "cadvisor":
             targets = settings["server"]["prometheus"]["exporter_endpoints"]["cadvisor"]
             job_dict["static_configs"][0]["targets"] = targets
+        elif job_dict["job_name"] == "poktnodes":
+            pokt_idx = idx
+            poktnodes_list = settings["server"]["prometheus"]["exporter_endpoints"]["poktnodes"]
+            for poktnode in poktnodes_list:
+                poktnode_target = poktnode["target"]
+                poktnode_region = poktnode["region"]
+                temp_poktnodes_dict = copy.deepcopy(template_dict["scrape_configs"][pokt_idx])
+                temp_poktnodes_dict["job_name"] = f'poktnodes-{poktnode["region"]}'
+                temp_poktnodes_dict["static_configs"][0]["targets"] = poktnode_target
+                temp_poktnodes_dict["static_configs"][0]["labels"]["regions"] = poktnode_region
+                template_dict["scrape_configs"].append(temp_poktnodes_dict)
+            del template_dict["scrape_configs"][pokt_idx]
+        elif job_dict["job_name"].startswith('poktnodes-'):
+            pass
         else:
             print(
                 f"Unexpected prometheus job found in config: {job_dict['job_name']}")

@@ -1,4 +1,4 @@
-version: 3
+version: 4
 
 clients:
   node_exporter:
@@ -29,6 +29,9 @@ server:
       cadvisor: ["111.222.333.002:8080"]
       blockchain: ["111.222.333.002:9877"]
       node: ["111.222.333.002:9100"]
+      poktnodes:
+        - region: "region1"
+          target: "111.222.333.003:80"
   grafana:
     port: 3000
   minio:
