@@ -31,7 +31,7 @@ server:
       node: ["111.222.333.002:9100"]
       poktnodes:
         - region: "region1"
-          target: "111.222.333.003:80"
+          target: ["111.222.333.003:80"]
   grafana:
     port: 3000
   minio:
