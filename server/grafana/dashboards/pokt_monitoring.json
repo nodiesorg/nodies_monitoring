@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 7,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1890,32 +1890,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "us-east-1"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -1923,7 +1898,7 @@
         "x": 0,
         "y": 14
       },
-      "id": 40,
+      "id": 54,
       "options": {
         "legend": {
           "calcs": [],
@@ -1943,13 +1918,13 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by (regions) ((delta(pocketcore_geo_mesh_relay_time_sum{regions=~\"$regions\", is_notify=\"false\"}[$__interval])) / delta(pocketcore_geo_mesh_relay_time_count{regions=~\"$regions\", is_notify=\"false\"}[$__interval]))",
+          "expr": "sum by(regions) (delta(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\"}[6h]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Latency",
+      "title": "Relay 6h Delta",
       "type": "timeseries"
     },
     {
@@ -2014,6 +1989,215 @@
         "w": 12,
         "x": 12,
         "y": 14
+      },
+      "id": 55,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[6h]))",
+          "legendFormat": "{{regions}}:{{chain_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Relay 6h Delta By Chain",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "my_prometheus_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 40,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval])) / sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval]))",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "my_prometheus_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "sgp:Arbitrum One (0066)"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
       },
       "id": 41,
       "options": {
@@ -2105,7 +2289,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 45,
       "options": {
@@ -2197,7 +2381,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 30
       },
       "id": 53,
       "options": {
@@ -2290,7 +2474,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 38
       },
       "id": 46,
       "options": {
@@ -2377,38 +2561,13 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "us-east-1-node4.pokt"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 46
       },
       "id": 50,
       "options": {
@@ -2430,10 +2589,22 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "(pocketcore_geo_mesh_tasks_waiting_total / on(stat_type, node_name, regions) pocketcore_geo_mesh_tasks_successful_total) * 100",
+          "expr": "(pocketcore_geo_mesh_tasks_waiting_total / on(stat_type, node_name, regions) pocketcore_geo_mesh_max_capacity) * 100",
           "legendFormat": "{{regions}}:{{node_name}}:{{stat_type}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "pocketcore_ge",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Servicer Worker Utilization %",
@@ -2477,7 +2648,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 53
       },
       "id": 52,
       "options": {
@@ -2654,7 +2825,7 @@
       "type": "table"
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -2824,13 +2995,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Pokt Monitoring",
   "uid": "A_kISSYVz",
-  "version": 9,
+  "version": 2,
   "weekStart": ""
 }
