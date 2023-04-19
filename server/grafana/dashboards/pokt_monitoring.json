@@ -30,23 +30,12 @@
   "liveNow": false,
   "panels": [
     {
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 48,
-      "title": "Row title",
-      "type": "row"
-    },
-    {
       "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 29,
       "panels": [
@@ -240,7 +229,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 1
       },
       "id": 19,
       "panels": [
@@ -861,7 +850,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 2
       },
       "id": 21,
       "panels": [
@@ -1045,7 +1034,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 3
       },
       "id": 17,
       "panels": [
@@ -1350,7 +1339,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 4
       },
       "id": 23,
       "panels": [
@@ -1655,7 +1644,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 33,
       "panels": [],
@@ -1723,7 +1712,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 7
+        "y": 6
       },
       "id": 49,
       "options": {
@@ -1745,7 +1734,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum(delta(pocketcore_geo_mesh_relay_count_for_all{regions=~\"$regions\"}[$interval]))",
+          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1815,7 +1804,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 7
+        "y": 6
       },
       "id": 35,
       "options": {
@@ -1837,8 +1826,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name) (delta(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\"}[$interval]))",
-          "legendFormat": "__auto",
+          "expr": "sum by(chain_name, regions) (rate(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
+          "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
         }
@@ -1901,13 +1890,38 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "us-east-1"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 14
       },
       "id": 40,
       "options": {
@@ -1929,7 +1943,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum(delta(pocketcore_geo_mesh_avg_relay_time_sum{regions=~\"$regions\"}[$interval])) / sum(delta(pocketcore_geo_mesh_avg_relay_time_count{regions=~\"$regions\"}[$interval]))",
+          "expr": "sum by (regions) ((delta(pocketcore_geo_mesh_relay_time_sum{regions=~\"$regions\", is_notify=\"false\"}[$__interval])) / delta(pocketcore_geo_mesh_relay_time_count{regions=~\"$regions\", is_notify=\"false\"}[$__interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1999,7 +2013,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 14
       },
       "id": 41,
       "options": {
@@ -2021,8 +2035,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_avg_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\"}[$interval])) / sum by(chain_name) (delta(pocketcore_geo_mesh_avg_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\"}[$interval]))",
-          "legendFormat": "__auto",
+          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval])) / sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval]))",
+          "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
         }
@@ -2091,7 +2105,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 22
       },
       "id": 45,
       "options": {
@@ -2113,7 +2127,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum(delta(pocketcore_geo_mesh_err_count_for_all{regions=~\"$regions\"}[$interval]))",
+          "expr": "sum by (regions) ((rate(pocketcore_geo_mesh_error_count{regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval])))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2183,7 +2197,100 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 23
+        "y": 22
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "sum by(chain_name, regions) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
+          "legendFormat": "{{regions}}:{{chain_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Error Rate By Chain",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "my_prometheus_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 30
       },
       "id": 46,
       "options": {
@@ -2205,13 +2312,13 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name) (delta(pocketcore_geo_mesh_err_count{chain_name=~\"$chain_name\", regions=~\"$regions\"}[$interval]))",
-          "legendFormat": "__auto",
+          "expr": "sum by (regions, node_name) (rate(pocketcore_geo_mesh_tasks_completed_total{regions=~\"$regions\", stat_type=\"node\"}[$__rate_interval]))",
+          "legendFormat": "{{regions}}:{{node_name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Error Rate by Chain",
+      "title": "Relay Notifier Rate",
       "type": "timeseries"
     },
     {
@@ -2270,13 +2377,38 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "us-east-1-node4.pokt"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 38
       },
       "id": 50,
       "options": {
@@ -2298,8 +2430,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "(pocketcore_geo_mesh_node_tasks_waiting_total / on(node_worker) pocketcore_geo_mesh_node_max_capacity) * 100",
-          "legendFormat": "__auto",
+          "expr": "(pocketcore_geo_mesh_tasks_waiting_total / on(stat_type, node_name, regions) pocketcore_geo_mesh_tasks_successful_total) * 100",
+          "legendFormat": "{{regions}}:{{node_name}}:{{stat_type}}",
           "range": true,
           "refId": "A"
         }
@@ -2307,6 +2439,219 @@
       "title": "Servicer Worker Utilization %",
       "transformations": [],
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "my_prometheus_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 52,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "__name__"
+          }
+        ]
+      },
+      "pluginVersion": "9.1.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "pocketcore_geo_mesh_max_workers",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "pocketcore_geo_mesh_min_workers",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "pocketcore_geo_mesh_max_capacity",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "pocketcore_geo_mesh_tasks_waiting_total",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "my_prometheus_uid"
+          },
+          "editorMode": "code",
+          "expr": "pocketcore_geo_mesh_tasks_failed_total",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "Metric Worker Table",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "keepLabels": [
+              "node_name",
+              "__name__",
+              "stat_type"
+            ],
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": []
+              },
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "__name__": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "node_name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "stat_type": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value (lastNotNull)": "Value",
+              "__name__": "Metric",
+              "node_name": "Full Node Host",
+              "stat_type": "Stat type"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Full Node Host"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Stat type"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "refresh": false,
@@ -2486,6 +2831,6 @@
   "timezone": "utc",
   "title": "Pokt Monitoring",
   "uid": "A_kISSYVz",
-  "version": 7,
+  "version": 9,
   "weekStart": ""
 }
