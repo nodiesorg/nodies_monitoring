@@ -2102,7 +2102,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval])) / sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval]))",
+          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval])) / sum by(regions) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2166,32 +2166,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "sgp:Arbitrum One (0066)"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -2219,7 +2194,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval])) / sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval]))",
+          "expr": "sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval])) / sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
           "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
@@ -2551,8 +2526,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2632,8 +2606,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2995,13 +2968,13 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Pokt Monitoring",
   "uid": "A_kISSYVz",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
