@@ -1081,7 +1081,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "(pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"} / on(stat_type, node_name, regions) pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}) * 100",
+          "expr": "(pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"} / on(stat_type, node_name, moniker, regions) pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}) * 100",
           "legendFormat": "{{regions}}:{{node_name}}:{{stat_type}}",
           "range": true,
           "refId": "A"
@@ -1280,17 +1280,6 @@
             "fields": {},
             "sort": [
               {
-                "field": "Monkier"
-              }
-            ]
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {},
-            "sort": [
-              {
                 "field": "Value"
               }
             ]
@@ -1303,6 +1292,17 @@
             "sort": [
               {
                 "field": "Stat type"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Monkier"
               }
             ]
           }
@@ -1519,6 +1519,6 @@
   "timezone": "utc",
   "title": "Pokt Monitoring",
   "uid": "A_kISSYVz",
-  "version": 12,
+  "version": 14,
   "weekStart": ""
 }
