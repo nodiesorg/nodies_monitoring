@@ -66,7 +66,7 @@ def update_prometheus_config():
                 temp_poktnodes_dict = copy.deepcopy(template_dict["scrape_configs"][pokt_idx])
                 temp_poktnodes_dict["job_name"] = f'poktnodes-{poktnode["region"]}'
                 temp_poktnodes_dict["static_configs"][0]["targets"] = poktnode_target
-                temp_poktnodes_dict["static_configs"][0]["labels"]["regions"] = poktnode_region
+                temp_poktnodes_dict["static_configs"][0]["labels"]["region"] = poktnode_region
                 template_dict["scrape_configs"].append(temp_poktnodes_dict)
             del template_dict["scrape_configs"][pokt_idx]
         elif job_dict["job_name"].startswith('poktnodes-'):

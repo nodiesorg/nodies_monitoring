@@ -125,7 +125,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "expr": "sum by(region) (rate(pocketcore_geo_mesh_relay_count{region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -217,8 +217,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (rate(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}:{{chain_name}}",
+          "expr": "sum by(chain_name, region) (rate(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{region}}:{{chain_name}}",
           "range": true,
           "refId": "A"
         }
@@ -280,8 +280,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval])))",
-          "legendFormat": "{{regions}}",
+          "expr": "sum by(region) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval])))",
+          "legendFormat": "{{region}}",
           "range": true,
           "refId": "A"
         }
@@ -343,8 +343,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions, chain_name) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval])))",
-          "legendFormat": "{{regions}}:{{chain_name}}",
+          "expr": "sum by(region, chain_name) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval])))",
+          "legendFormat": "{{region}}:{{chain_name}}",
           "range": true,
           "refId": "A"
         }
@@ -435,7 +435,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (delta(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval]))",
+          "expr": "sum by(region) (delta(pocketcore_geo_mesh_relay_count{region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -527,8 +527,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[6h]))",
-          "legendFormat": "{{regions}}:{{chain_name}}",
+          "expr": "sum by(chain_name, region) (delta(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[6h]))",
+          "legendFormat": "{{region}}:{{chain_name}}",
           "range": true,
           "refId": "A"
         }
@@ -619,7 +619,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval])) / sum by(regions) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "expr": "sum by(region) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval])) / sum by(region) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -711,8 +711,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval])) / sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}:{{chain_name}}",
+          "expr": "sum by(region, chain_name) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval])) / sum by(region, chain_name) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{region}}:{{chain_name}}",
           "range": true,
           "refId": "A"
         }
@@ -803,8 +803,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions, status_label, status_type) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}:{{status_type}}:{{status_label}}",
+          "expr": "sum by(region, status_label, status_type) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{region}}:{{status_type}}:{{status_label}}",
           "range": true,
           "refId": "A"
         }
@@ -895,8 +895,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions, status_label, status_type) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}:{{chain_name}}:{{status_type}}:{{status_label}}",
+          "expr": "sum by(chain_name, region, status_label, status_type) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", region=~\"$region\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{region}}:{{chain_name}}:{{status_type}}:{{status_label}}",
           "range": true,
           "refId": "A"
         }
@@ -988,8 +988,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by (regions) (rate(pocketcore_geo_mesh_tasks_completed_total{regions=~\"$regions\", stat_type=\"node\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}",
+          "expr": "sum by (region) (rate(pocketcore_geo_mesh_tasks_completed_total{region=~\"$region\", stat_type=\"node\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{region}}",
           "range": true,
           "refId": "A"
         }
@@ -1081,8 +1081,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "(pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"} / on(stat_type, node_name, moniker, regions) pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}) * 100",
-          "legendFormat": "{{regions}}:{{moniker}}:{{stat_type}}",
+          "expr": "(pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"} / on(stat_type, node_name, moniker, region) pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}) * 100",
+          "legendFormat": "{{region}}:{{moniker}}:{{stat_type}}",
           "range": true,
           "refId": "A"
         }
@@ -1331,15 +1331,15 @@
           "type": "prometheus",
           "uid": "my_prometheus_uid"
         },
-        "definition": "label_values(regions)",
+        "definition": "label_values(region)",
         "hide": 0,
         "includeAll": true,
-        "label": "Regions",
+        "label": "Region",
         "multi": true,
-        "name": "regions",
+        "name": "region",
         "options": [],
         "query": {
-          "query": "label_values(regions)",
+          "query": "label_values(region)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

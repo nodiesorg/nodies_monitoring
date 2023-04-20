@@ -48,4 +48,4 @@ scrape_configs:
     static_configs:
       - targets: ['poktnodes:80']
         labels:
-          regions: 'region1'
+          region: 'region1'
