@@ -131,7 +131,7 @@
           "refId": "A"
         }
       ],
-      "title": "Relay Rate",
+      "title": "Relay Rate By Region",
       "type": "timeseries"
     },
     {
@@ -223,7 +223,7 @@
           "refId": "A"
         }
       ],
-      "title": "Relay Rate By Chain",
+      "title": "Relay Rate By Region/Chain",
       "type": "timeseries"
     },
     {
@@ -349,7 +349,7 @@
           "refId": "A"
         }
       ],
-      "title": "Relay Breakdown by Chain",
+      "title": "Relay Breakdown by Region/Chain",
       "type": "piechart"
     },
     {
@@ -441,7 +441,7 @@
           "refId": "A"
         }
       ],
-      "title": "Relay 6h Delta",
+      "title": "Relay 6h Delta By Region",
       "type": "timeseries"
     },
     {
@@ -533,7 +533,7 @@
           "refId": "A"
         }
       ],
-      "title": "Relay 6h Delta By Chain",
+      "title": "Relay 6h Delta By Region/Chain",
       "type": "timeseries"
     },
     {
@@ -625,7 +625,7 @@
           "refId": "A"
         }
       ],
-      "title": "Latency",
+      "title": "Latency By Region",
       "type": "timeseries"
     },
     {
@@ -717,7 +717,7 @@
           "refId": "A"
         }
       ],
-      "title": "Latency by Chain",
+      "title": "Latency by Region/Chain",
       "type": "timeseries"
     },
     {
@@ -809,7 +809,7 @@
           "refId": "A"
         }
       ],
-      "title": "Error Rate",
+      "title": "Error Rate By Region",
       "type": "timeseries"
     },
     {
@@ -901,7 +901,7 @@
           "refId": "A"
         }
       ],
-      "title": "Error Rate By Chain",
+      "title": "Error Rate By Region/Chain",
       "transformations": [],
       "type": "timeseries"
     },
@@ -988,13 +988,13 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by (regions, node_name) (rate(pocketcore_geo_mesh_tasks_completed_total{regions=~\"$regions\", stat_type=\"node\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}:{{node_name}}",
+          "expr": "sum by (regions) (rate(pocketcore_geo_mesh_tasks_completed_total{regions=~\"$regions\", stat_type=\"node\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{regions}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Relay Notifier Rate",
+      "title": "Relay Notifier Rate By Region",
       "type": "timeseries"
     },
     {
@@ -1082,12 +1082,12 @@
           },
           "editorMode": "code",
           "expr": "(pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"} / on(stat_type, node_name, moniker, regions) pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}) * 100",
-          "legendFormat": "{{regions}}:{{node_name}}:{{stat_type}}",
+          "legendFormat": "{{regions}}:{{moniker}}:{{stat_type}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Servicer Worker Utilization %",
+      "title": "Moniker Worker Utilization %",
       "transformations": [],
       "type": "timeseries"
     },
@@ -1280,6 +1280,17 @@
             "fields": {},
             "sort": [
               {
+                "field": "Monkier"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
                 "field": "Value"
               }
             ]
@@ -1292,17 +1303,6 @@
             "sort": [
               {
                 "field": "Stat type"
-              }
-            ]
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {},
-            "sort": [
-              {
-                "field": "Monkier"
               }
             ]
           }
@@ -1319,35 +1319,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "loki",
-          "uid": "my_loki_uid"
-        },
-        "definition": "label_values(status)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Status Code",
-        "multi": true,
-        "name": "status",
-        "options": [],
-        "query": "label_values(status)",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 3,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -1378,7 +1350,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -1409,7 +1381,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -1519,6 +1491,6 @@
   "timezone": "utc",
   "title": "Pokt Monitoring",
   "uid": "A_kISSYVz",
-  "version": 14,
+  "version": 16,
   "weekStart": ""
 }
