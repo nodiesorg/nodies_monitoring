@@ -81,6 +81,14 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 </details>
 
+Clone the repository
+```bash
+sudo git clone https://github.com/baaspoolsllc/nodies_monitoring.git
+```
+Change the current working directory to the cloned repository
+```bash
+cd nodies_monitoring
+```
 Install python3-pip
 ```bash
 apt install python3-pip
@@ -114,12 +122,32 @@ On your monitoring server:
 ```bash
 sudo python3 setup.py
 ```
+2. Edit the `settings.yml.new` file
+```bash
+sudo vi settings.yml.new
+```
+3. Rename the file `settings.yml.new` to `settings.yml`
+```bash
+sudo mv settings.yml.new settings.yml
+```
+4. Create the `chains.json` file - Mandatory
+```bash
+echo "[]" > clients/bcexporter/config/chains.json
+```
+5. Execute the [setup.py](setup.py) once again
+```bash
+sudo python3 setup.py
+```
+6. Change directory into the [server](./server) subfolder, and boot up all server services
+```bash
+cd server && docker compose up -d
+```
+7. Launch a browser and navigate to `http://<host>:<port>` e.g http://192.168.1.2:3000
+
+Default username and password for Grafana is `admin:admin`
+
 **NOTE:** Sudo is required here to set some folder permissions
 
-2. Change directory into the [server](./server) subfolder, and boot up all server services
-```bash
-cd nodies_monitoring/server && docker compose up -d
-```
 ----
 
 ### Client setup
@@ -161,12 +189,29 @@ Note: Replace the `region` value with a unique region identifer, i.e `us-east-1`
 ```bash
 sudo python3 setup.py
 ```
+4. Edit the `settings.yml.new` file
+```bash
+sudo vi settings.yml.new
+```
+5. Rename the file `settings.yml.new` to `settings.yml`
+```bash
+sudo mv settings.yml.new settings.yml
+```
+6. Create the `chains.json` file - Mandatory
+```bash
+echo "[]" > clients/bcexporter/config/chains.json
+```
+5. Execute the [setup.py](setup.py) once again
+```bash
+sudo python3 setup.py
+```
+6. Modify `clients.promtail.log_root_path` in the `settings.yml` file to reflect your nginx log directory
+7. Change directory into the [clients](./clients) subfolder, and boot up all client services
+```bash
+cd clients && docker compose up -d
+```
 **NOTE:** Sudo is required here to set some folder permissions
 
-4. Change directory into the [clients](./clients) subfolder, and boot up all client services
-```bash
-cd nodies_monitoring/server && docker compose up -d
-```
 ----
 
 ### Run individual clients
