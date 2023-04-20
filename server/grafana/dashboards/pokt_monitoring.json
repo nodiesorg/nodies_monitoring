@@ -30,1621 +30,12 @@
   "liveNow": false,
   "panels": [
     {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 29,
-      "panels": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 52
-          },
-          "id": 27,
-          "options": {
-            "displayLabels": [],
-            "legend": {
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true,
-              "values": [
-                "percent",
-                "value"
-              ]
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(http_user_agent) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} | json http_user_agent [$__range]))",
-              "legendFormat": "{{http_user_agent}}",
-              "queryType": "range",
-              "refId": "A",
-              "resolution": 1
-            }
-          ],
-          "title": "Top User Agents",
-          "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-GrYlRd"
-              },
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "inspect": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "lcd-gauge"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 16,
-            "x": 8,
-            "y": 52
-          },
-          "id": 31,
-          "options": {
-            "footer": {
-              "enablePagination": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": false
-          },
-          "pluginVersion": "9.1.6",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "topk(10, sum by(request, status) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} | json request [$__range])))",
-              "legendFormat": "{{request}}:{{status}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Top Endpoints",
-          "transformations": [
-            {
-              "id": "reduce",
-              "options": {
-                "reducers": [
-                  "lastNotNull"
-                ]
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {},
-                "renameByName": {
-                  "Last *": "Value"
-                }
-              }
-            },
-            {
-              "id": "sortBy",
-              "options": {
-                "fields": {},
-                "sort": [
-                  {
-                    "desc": true,
-                    "field": "Value"
-                  }
-                ]
-              }
-            }
-          ],
-          "type": "table"
-        }
-      ],
-      "title": "Top Agents and Endpoints",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 19,
-      "panels": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-GrYlRd"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 20,
-                "gradientMode": "scheme",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "smooth",
-                "lineWidth": 3,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 2
-          },
-          "id": 1,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "9.1.6",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(job) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$interval]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{job}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 14,
-            "x": 0,
-            "y": 11
-          },
-          "id": 2,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "max",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "sortBy": "Mean",
-              "sortDesc": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(status) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$interval]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{status}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests by Status Code",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 10,
-            "x": 14,
-            "y": 11
-          },
-          "id": 3,
-          "options": {
-            "displayLabels": [],
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(status) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$__range]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{status}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests by Status Code",
-          "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 14,
-            "x": 0,
-            "y": 18
-          },
-          "id": 5,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "max",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "sortBy": "Mean",
-              "sortDesc": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(chain_name) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$interval]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{status}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests by Blockchain Node",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 10,
-            "x": 14,
-            "y": 18
-          },
-          "id": 4,
-          "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "sortBy": "Percent",
-              "sortDesc": false,
-              "values": [
-                "percent",
-                "value"
-              ]
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(chain_name) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$__range]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{status}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests by Blockchain Node",
-          "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 14,
-            "x": 0,
-            "y": 25
-          },
-          "id": 6,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "max",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "sortBy": "Mean",
-              "sortDesc": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(regions) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$interval]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{region}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests by Region",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 10,
-            "x": 14,
-            "y": 25
-          },
-          "id": 7,
-          "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "percent",
-                "value"
-              ]
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(regions) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} [$__range]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{region}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Requests by Region",
-          "type": "piechart"
-        }
-      ],
-      "title": "Requests",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 2
-      },
-      "id": 21,
-      "panels": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 14,
-            "x": 0,
-            "y": 41
-          },
-          "id": 8,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "max",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "sortBy": "Mean",
-              "sortDesc": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(chain_name, regions) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} | status = `401` [$interval]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Error Codes by Blockchain and Region",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 10,
-            "x": 14,
-            "y": 41
-          },
-          "id": 9,
-          "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "percent",
-                "value"
-              ]
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "sum by(chain_name, regions) (count_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"$status\", chain_name=~\"$chain_name\"} | status = `401` [$__range]))",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Error Codes by Blockchain and Region",
-          "type": "piechart"
-        }
-      ],
-      "title": "Error Codes",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 3
-      },
-      "id": 17,
-      "panels": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 4
-          },
-          "id": 14,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "avg by(chain_name, regions) (avg_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"2\\\\d{2}\", chain_name=~\"$chain_name\"} | json request_time | unwrap request_time | __error__=`` [$interval]) * 1000)",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Average Request Time by Blockchain and Region",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 4
-          },
-          "id": 12,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "code",
-              "expr": "quantile_over_time(0.50, {job=\"varlogs\", regions=~\"$regions\", status=~\"2\\\\d{2}\", chain_name=~\"$chain_name\"} | json request_time | unwrap request_time | __error__=`` [$interval]) by (chain_name, regions) * 1000",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Request Time P50 by Blockchain and Region",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 4
-          },
-          "id": 13,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "code",
-              "expr": "quantile_over_time(0.90, {job=\"varlogs\", regions=~\"$regions\", status=~\"2\\\\d{2}\", chain_name=~\"$chain_name\"} | json request_time | unwrap request_time | __error__=`` [$interval]) by (chain_name, regions) * 1000",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Request Time P90 by Blockchain and Region",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Request Time",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 4
-      },
-      "id": 23,
-      "panels": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 5
-          },
-          "id": 15,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "builder",
-              "expr": "avg by(chain_name, regions) (avg_over_time({job=\"varlogs\", regions=~\"$regions\", status=~\"2\\\\d{2}\", chain_name=~\"$chain_name\"} | json upstream_response_time | unwrap upstream_response_time | __error__=`` [$interval]) * 1000)",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Average Upstream Latency by Blockchain and Region",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 5
-          },
-          "id": 10,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "code",
-              "expr": "quantile_over_time(0.5, {job=\"varlogs\", regions=~\"$regions\", status=~\"2\\\\d{2}\", chain_name=~\"$chain_name\"} | json upstream_response_time | unwrap upstream_response_time | __error__=`` [$interval]) by (chain_name, regions)",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Upstream Latency P50 by Blockchain and Region",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "my_loki_uid"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 5
-          },
-          "id": 11,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "timezone": [
-              "utc"
-            ],
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "my_loki_uid"
-              },
-              "editorMode": "code",
-              "expr": "quantile_over_time(0.9, {job=\"varlogs\", regions=~\"$regions\", status=~\"2\\\\d{2}\", chain_name=~\"$chain_name\"} | json upstream_response_time | unwrap upstream_response_time | __error__=`` [$interval]) by (chain_name, regions)",
-              "key": "Q-7d235f0f-e211-494d-abc8-99697ba883c0-0",
-              "legendFormat": "{{chain_name}},{{regions}}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Upstream Latency P90 by Blockchain and Region",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Upstream Response Time",
-      "type": "row"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 0
       },
       "id": 33,
       "panels": [],
@@ -1696,12 +87,12 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-red",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "green",
+                "value": ""
               }
             ]
           }
@@ -1712,7 +103,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 6
+        "y": 1
       },
       "id": 49,
       "options": {
@@ -1734,7 +125,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
+          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1804,7 +195,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 1
       },
       "id": 35,
       "options": {
@@ -1826,7 +217,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (rate(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
+          "expr": "sum by(chain_name, regions) (rate(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
@@ -1860,7 +251,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 9
       },
       "id": 56,
       "options": {
@@ -1889,7 +280,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval])))",
+          "expr": "sum by(regions) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval])))",
           "legendFormat": "{{regions}}",
           "range": true,
           "refId": "A"
@@ -1923,7 +314,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 9
       },
       "id": 57,
       "options": {
@@ -1952,7 +343,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions, chain_name) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__interval])))",
+          "expr": "sum by(regions, chain_name) (increase((pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval])))",
           "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
@@ -2022,7 +413,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 17
       },
       "id": 54,
       "options": {
@@ -2044,7 +435,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (delta(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\"}[6h]))",
+          "expr": "sum by(regions) (delta(pocketcore_geo_mesh_relay_count{regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2114,7 +505,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 17
       },
       "id": 55,
       "options": {
@@ -2136,7 +527,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[6h]))",
+          "expr": "sum by(chain_name, regions) (delta(pocketcore_geo_mesh_relay_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[6h]))",
           "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
@@ -2182,7 +573,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -2195,7 +586,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 150
               }
             ]
           }
@@ -2206,7 +597,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 25
       },
       "id": 40,
       "options": {
@@ -2228,7 +619,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval])) / sum by(regions) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
+          "expr": "sum by(regions) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval])) / sum by(regions) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2274,7 +665,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -2287,7 +678,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 150
               }
             ]
           }
@@ -2298,7 +689,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 25
       },
       "id": 41,
       "options": {
@@ -2320,7 +711,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval])) / sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
+          "expr": "sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_sum{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval])) / sum by(regions, chain_name) (rate(pocketcore_geo_mesh_relay_time_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "{{regions}}:{{chain_name}}",
           "range": true,
           "refId": "A"
@@ -2366,7 +757,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -2379,7 +770,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           }
@@ -2390,7 +781,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 38
+        "y": 33
       },
       "id": 45,
       "options": {
@@ -2412,8 +803,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by (regions) ((rate(pocketcore_geo_mesh_error_count{regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval])))",
-          "legendFormat": "__auto",
+          "expr": "sum by(regions, status_label, status_type) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{regions}}:{{status_type}}:{{status_label}}",
           "range": true,
           "refId": "A"
         }
@@ -2458,7 +849,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -2471,7 +862,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           }
@@ -2482,7 +873,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 38
+        "y": 33
       },
       "id": 53,
       "options": {
@@ -2504,8 +895,8 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by(chain_name, regions) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\"}[$__rate_interval]))",
-          "legendFormat": "{{regions}}:{{chain_name}}",
+          "expr": "sum by(chain_name, regions, status_label, status_type) (rate(pocketcore_geo_mesh_error_count{chain_name=~\"$chain_name\", regions=~\"$regions\", is_notify=\"false\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
+          "legendFormat": "{{regions}}:{{chain_name}}:{{status_type}}:{{status_label}}",
           "range": true,
           "refId": "A"
         }
@@ -2575,7 +966,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 41
       },
       "id": 46,
       "options": {
@@ -2597,7 +988,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "sum by (regions, node_name) (rate(pocketcore_geo_mesh_tasks_completed_total{regions=~\"$regions\", stat_type=\"node\"}[$__rate_interval]))",
+          "expr": "sum by (regions, node_name) (rate(pocketcore_geo_mesh_tasks_completed_total{regions=~\"$regions\", stat_type=\"node\", moniker=~\"$mesh_moniker\"}[$__rate_interval]))",
           "legendFormat": "{{regions}}:{{node_name}}",
           "range": true,
           "refId": "A"
@@ -2644,7 +1035,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -2657,7 +1048,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 50
               }
             ]
           }
@@ -2668,7 +1059,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 49
       },
       "id": 50,
       "options": {
@@ -2690,22 +1081,10 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "(pocketcore_geo_mesh_tasks_waiting_total / on(stat_type, node_name, regions) pocketcore_geo_mesh_max_capacity) * 100",
+          "expr": "(pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"} / on(stat_type, node_name, regions) pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}) * 100",
           "legendFormat": "{{regions}}:{{node_name}}:{{stat_type}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "my_prometheus_uid"
-          },
-          "editorMode": "code",
-          "expr": "pocketcore_ge",
-          "hide": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B"
         }
       ],
       "title": "Servicer Worker Utilization %",
@@ -2749,7 +1128,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 56
       },
       "id": 52,
       "options": {
@@ -2777,7 +1156,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "pocketcore_geo_mesh_max_workers",
+          "expr": "pocketcore_geo_mesh_max_workers{moniker=~\"$mesh_moniker\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2788,7 +1167,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "pocketcore_geo_mesh_min_workers",
+          "expr": "pocketcore_geo_mesh_min_workers{moniker=~\"$mesh_moniker\"}",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -2800,7 +1179,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "pocketcore_geo_mesh_max_capacity",
+          "expr": "pocketcore_geo_mesh_max_capacity{moniker=~\"$mesh_moniker\"}",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -2812,7 +1191,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "pocketcore_geo_mesh_tasks_waiting_total",
+          "expr": "pocketcore_geo_mesh_tasks_waiting_total{moniker=~\"$mesh_moniker\"}",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -2824,7 +1203,7 @@
             "uid": "my_prometheus_uid"
           },
           "editorMode": "code",
-          "expr": "pocketcore_geo_mesh_tasks_failed_total",
+          "expr": "pocketcore_geo_mesh_tasks_failed_total{moniker=~\"$mesh_moniker\"}",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -2839,7 +1218,8 @@
             "keepLabels": [
               "node_name",
               "__name__",
-              "stat_type"
+              "stat_type",
+              "moniker"
             ],
             "mode": "columns"
           }
@@ -2865,6 +1245,10 @@
                 "aggregations": [],
                 "operation": "groupby"
               },
+              "moniker": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
               "node_name": {
                 "aggregations": [],
                 "operation": "groupby"
@@ -2884,6 +1268,7 @@
             "renameByName": {
               "Value (lastNotNull)": "Value",
               "__name__": "Metric",
+              "moniker": "Monkier",
               "node_name": "Full Node Host",
               "stat_type": "Stat type"
             }
@@ -2895,7 +1280,7 @@
             "fields": {},
             "sort": [
               {
-                "field": "Full Node Host"
+                "field": "Monkier"
               }
             ]
           }
@@ -2934,7 +1319,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -2962,7 +1347,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -2993,7 +1378,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -3024,7 +1409,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -3092,17 +1477,48 @@
         "refresh": 2,
         "skipUrlSync": false,
         "type": "interval"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "my_prometheus_uid"
+        },
+        "definition": "label_values(moniker)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Mesh moniker",
+        "multi": true,
+        "name": "mesh_moniker",
+        "options": [],
+        "query": {
+          "query": "label_values(moniker)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Pokt Monitoring",
   "uid": "A_kISSYVz",
-  "version": 7,
+  "version": 12,
   "weekStart": ""
 }
